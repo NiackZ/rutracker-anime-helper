@@ -1,3 +1,15 @@
+// ==UserScript==
+// @name         rutracker release helper
+// @version      1.00
+// @description  Заполнение полей по данным со страницы аниме на сайте World-Art
+// @author       NiackZ
+// @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
+// @grant        none
+// @homepage     https://github.com/NiackZ/rutracker-anime-helper
+// @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/blob/master/helper.js
+// @updateURL    https://github.com/NiackZ/rutracker-anime-helper/blob/master/helper.js
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=rutracker.org
+// ==/UserScript==
 (function() {
     'use strict';
     const fetchData = async (link, apiEndpoint = '/get/anime/info') => {
@@ -20,8 +32,7 @@
             console.error('Ошибка: ', error.message);
         }
     };
-
-    function addRow() {
+    const addRow = () => {
         const tbody = document.getElementById('rel-tpl');
         const newRow = tbody.insertRow(0);
 
