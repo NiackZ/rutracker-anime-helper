@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      1.5
+// @version      1.6
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
 // @author       NiackZ
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
@@ -117,6 +117,7 @@
         inputsCell.appendChild(infoSpan);
     }
     const fillFields = (anime) => {
+        console.dir(anime);
         const setOptionIfExists = (select, value) => {
             const optionExists = Array.from(select.options).some(option => option.value === value);
             if (optionExists) {
@@ -135,19 +136,27 @@
         const director = document.getElementById("director");
         const studio = document.getElementById("c6ed4beb1b80956095e7c0aba867d08f");
         const description = document.getElementById("description");
-        const episodeList = document.getElementById("bd78750529cad34e379eca8e6a255d42");
+        const episodeTextArea = document.getElementById("bd78750529cad34e379eca8e6a255d42");
 
         if (anime.names.ru) {
             rusName.value = anime.names.ru;
         }
+        let fillRomaji = true;
         if (anime.names.en) {
             engName.value = anime.names.en;
         }
-        if (anime.names.romaji) {
+        else {
+            if (anime.names.romaji) {
+                engName.value = anime.names.romaji;
+                fillRomaji = false;
+            }
+        }
+        if (fillRomaji && anime.names.romaji) {
             othName.value = anime.names.romaji;
         }
+
         if (anime.names.kanji) {
-            othName.value += !!othName.value
+            othName.value = !!othName.value
                 ? `${othName.value} / ${anime.names.kanji}`
                 :anime.names.kanji;
         }
@@ -190,6 +199,11 @@
             studio.value = anime.studios.map(st => st.name).join(', ');
         }
 
+        if (!!anime.episodes) {
+            anime.episodes.forEach((name, index) => {
+                episodeTextArea.value = `${episodeTextArea.value}${index + 1}. ${name}\n`;
+            });
+        }
 
     }
     addRow();
