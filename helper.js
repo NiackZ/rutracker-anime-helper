@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      1.6
+// @version      1.7
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
 // @author       NiackZ
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
@@ -137,7 +137,8 @@
         const studio = document.getElementById("c6ed4beb1b80956095e7c0aba867d08f");
         const description = document.getElementById("description");
         const episodeTextArea = document.getElementById("bd78750529cad34e379eca8e6a255d42");
-
+        othName.value = "";
+        episodeTextArea.value = "";
         if (anime.names.ru) {
             rusName.value = anime.names.ru;
         }
