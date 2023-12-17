@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      1.7
+// @version      1.8
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
 // @author       NiackZ
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
@@ -117,7 +117,7 @@
         inputsCell.appendChild(infoSpan);
     }
     const fillFields = (anime) => {
-        console.dir(anime);
+        console.log(anime);
         const setOptionIfExists = (select, value) => {
             const optionExists = Array.from(select.options).some(option => option.value === value);
             if (optionExists) {
@@ -152,7 +152,7 @@
                 fillRomaji = false;
             }
         }
-        if (fillRomaji && anime.names.romaji) {
+        if (fillRomaji && anime.names.romaji && engName.value !== anime.names.romaji) {
             othName.value = anime.names.romaji;
         }
 
