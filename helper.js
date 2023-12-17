@@ -6,8 +6,8 @@
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
 // @grant        none
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
-// @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/blob/master/helper.js
-// @updateURL    https://github.com/NiackZ/rutracker-anime-helper/blob/master/helper.js
+// @downloadURL  https://raw.githubusercontent.com/NiackZ/rutracker-anime-helper/master/helper.js
+// @updateURL    https://raw.githubusercontent.com/NiackZ/rutracker-anime-helper/master/helper.js
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=rutracker.org
 // ==/UserScript==
 (function() {
