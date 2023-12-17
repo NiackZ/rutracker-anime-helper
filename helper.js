@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      1.4
+// @version      1.5
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
 // @author       NiackZ
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
@@ -147,7 +147,9 @@
             othName.value = anime.names.romaji;
         }
         if (anime.names.kanji) {
-            othName.value += anime.names.kanji;
+            othName.value += !!othName.value
+                ? `${othName.value} / ${anime.names.kanji}`
+                :anime.names.kanji;
         }
 
         if (anime.country) {
@@ -166,8 +168,7 @@
             setOptionIfExists(animeType, anime.type.shortType);
         }
 
-
-        if (anime.type.episodes) {
+        if (!!anime.type.episodes && Number(anime.type.episodes) > 1) {
             episodes.value = `${anime.type.episodes} из ${anime.type.episodes}`;
         }
 
