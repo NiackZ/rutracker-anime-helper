@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      1.1
+// @version      1.2
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
 // @author       NiackZ
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
