@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      1.2
+// @version      1.3
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
 // @author       NiackZ
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
@@ -71,18 +71,28 @@
         fillButton.style.width = '100px';
         fillButton.value = 'Заполнить';
         fillButton.onclick = async function() {
-            fillButton.disabled = true;
-            const link = document.getElementById('titleLink').value;
-            if (!link) {
-                alert("Вставьте ссылку с сайта world-art");
-            }
-            else {
-                const response = await fetchData(link);
-                if (!!response.anime) {
-                    fillFields(response.anime);
+
+            try{
+                fillButton.disabled = true;
+                const link = document.getElementById('titleLink').value;
+                if (!link) {
+                    alert("Вставьте ссылку с сайта world-art");
+                }
+                else {
+                    const response = await fetchData(link);
+                    if (!!response.anime) {
+                        fillFields(response.anime);
+                    }
                 }
             }
-            fillButton.disabled = false;
+            catch (error) {
+                console.error(error);
+            }
+            finally {
+                fillButton.disabled = false;
+            }
+
+
         };
         buttonSpan.appendChild(fillButton);
 
