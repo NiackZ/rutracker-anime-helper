@@ -108,6 +108,12 @@
         inputsCell.appendChild(infoSpan);
     }
     const fillFields = (anime) => {
+        const setOptionIfExists = (select, value) => {
+            const optionExists = Array.from(select.options).some(option => option.value === value);
+            if (optionExists) {
+                select.value = value;
+            }
+        };
         const rusName = document.getElementById("title_rus");
         const engName = document.getElementById("title_eng");
         const othName = document.getElementById("19196242af37f0ad77a7f593b45f8207");
@@ -121,6 +127,60 @@
         const studio = document.getElementById("c6ed4beb1b80956095e7c0aba867d08f");
         const description = document.getElementById("description");
         const episodeList = document.getElementById("bd78750529cad34e379eca8e6a255d42");
+
+        if (anime.names.ru) {
+            rusName.value = anime.names.ru;
+        }
+        if (anime.names.en) {
+            engName.value = anime.names.en;
+        }
+        if (anime.names.romaji) {
+            othName.value = anime.names.romaji;
+        }
+        if (anime.names.kanji) {
+            othName.value += anime.names.kanji;
+        }
+
+        if (anime.country) {
+            setOptionIfExists(country, anime.country);
+        }
+
+        if (anime.year) {
+            year.value = anime.year;
+        }
+
+        if (anime.genres) {
+            genre.value = anime.genres
+        }
+
+        if (anime.type.shortType) {
+            setOptionIfExists(animeType, anime.type.shortType);
+        }
+
+
+        if (anime.type.episodes) {
+            episodes.value = `${anime.type.episodes} из ${anime.type.episodes}`;
+        }
+
+        if (anime.type.duration && anime.type.episodes) {
+            duration.value = Number(anime.type.episodes) === 1
+                ? anime.type.duration
+                : `${anime.type.episodes} эп, ~${anime.type.duration}`;
+        }
+
+        if (anime.director) {
+            director.value = anime.director;
+        }
+
+        if (anime.description) {
+            description.value = anime.description;
+        }
+
+        if (!!anime.studios) {
+            studio.value = anime.studios.map(st => st.name).join(', ');
+        }
+
+
     }
     addRow();
 })();
