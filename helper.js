@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      1.3
+// @version      1.4
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
 // @author       NiackZ
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
@@ -26,8 +26,7 @@
             if (!response.ok) {
                 throw new Error(`Ошибка при получении данных.  ` + response);
             }
-            const responseData = await response.json();
-            console.log('Успешно: ', responseData);
+            return await response.json();
         } catch (error) {
             console.error('Ошибка: ', error.message);
         }
