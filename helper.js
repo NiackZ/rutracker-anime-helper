@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      1.00
+// @version      1.01
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
 // @author       NiackZ
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
@@ -77,7 +77,10 @@
                 alert("Вставьте ссылку с сайта world-art");
             }
             else {
-                await fetchData(link);
+                const response = await fetchData(link);
+                if (!!response.anime) {
+                    fillFields(response.anime);
+                }
             }
             fillButton.disabled = false;
         };
@@ -104,6 +107,20 @@
 
         inputsCell.appendChild(infoSpan);
     }
-
+    const fillFields = (anime) => {
+        const rusName = document.getElementById("title_rus");
+        const engName = document.getElementById("title_eng");
+        const othName = document.getElementById("19196242af37f0ad77a7f593b45f8207");
+        const country = document.getElementById("country_anime");
+        const year = document.getElementById("year");
+        const genre = document.getElementById("genre");
+        const animeType = document.getElementById("anime_type");
+        const episodes = document.getElementById("731ffae21574667873e9717a7fa433b5");
+        const duration = document.getElementById("playtime");
+        const director = document.getElementById("director");
+        const studio = document.getElementById("c6ed4beb1b80956095e7c0aba867d08f");
+        const description = document.getElementById("description");
+        const episodeList = document.getElementById("bd78750529cad34e379eca8e6a255d42");
+    }
     addRow();
 })();
