@@ -166,8 +166,10 @@
             setOptionIfExists(country, anime.country);
         }
 
-        if (anime.year) {
-            year.value = anime.year;
+        if (anime.season) {
+            if (anime.season.year) {
+                year.value = anime.season.year;
+            }
         }
 
         if (anime.genres) {
