@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         rutracker release helper
-// @version      2.1
+// @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
+// @version      2.2
 // @author       NiackZ
-// @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
-// @grant        none
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.js
 // @updateURL    https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.js
+// @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
+// @grant        none
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=rutracker.org
 // ==/UserScript==
 (function() {
