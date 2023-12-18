@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      2.2
+// @version      2.3
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.js
@@ -11,6 +11,8 @@
 // @grant        none
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=rutracker.org
 // ==/UserScript==
+//
+
 (function() {
     'use strict';
     const fetchData = async (link, apiEndpoint = '/get/anime/info') => {
