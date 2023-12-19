@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      2.4
+// @version      2.5
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -105,7 +105,7 @@
                         width: _width ? _width.replaceAll(" ", "") : null,
                         height: _height ? _height.replaceAll(" ", "") : null,
                         aspect: parseField(videoBlock, regex.ASPECT),
-                        fps: _fps ? `${_fps.split(" ")[0]} fps` : null,
+                        fps: _fps ? _fps.split(" ")[0] : null,
                         bitDepth: parseField(videoBlock, regex.BIT_DEPTH),
                         bitRate: parseField(videoBlock, regex.BIT_RATE),
                         fileExt: null
@@ -432,7 +432,7 @@
                                 videoInfo.push(techData.videoInfo.bitRate);
                             }
                             if (techData.videoInfo?.fps) {
-                                videoInfo.push(techData.videoInfo.fps);
+                                videoInfo.push(`${techData.videoInfo.fps} fps`);
                             }
                             if (techData.videoInfo?.bitDepth) {
                                 videoInfo.push(`${techData.videoInfo.bitDepth}bit`);
