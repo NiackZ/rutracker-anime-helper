@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      2.8
+// @version      2.9
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -365,10 +365,10 @@
         <b>_EPISODES_</b> — список эпизодов;<br>
         <br>
         Если поле "Подробные тех. данные" заполнено MediaInfo информацией, то заполняются следующие поля;<br>
-        <b>_MEDIAINFO_</b> — отчёт MediaInfo;<br>
         <b>_VIDEOEXT_</b> — формат видео;  <b>_VIDEOHEIGHT_</b> — высота видео; <b>_VIDEOWIDTH_</b> — ширина видео; <br>
-        <b>_VIDEOCODEC_</b> — кодек видео; <b>_VIDEOASPECT_</b> — соотношение сторон; <b>_VIDEOBITRATE_</b> — битрейт видео;<br>
-        <b>_VIDEOFPS_</b> — частота кадров (fps); <b>_VIDEOBITDEPTH_</b> — битовая глубина;<br>
+        <b>_VIDEOCODEC_</b> — кодек видео; <b>_VIDEOCODECPROFILE_</b> — профиль кодека; <b>_VIDEOASPECT_</b> — соотношение сторон; <br>
+        <b>_VIDEOBITRATE_</b> — битрейт видео; <b>_VIDEOFPS_</b> — частота кадров (fps); <b>_VIDEOBITDEPTH_</b> — битовая глубина;<br>
+        <b>_VIDEOCHROMASUBSAMPLING_</b> — субдискретизация насыщенности; <b>_VIDEOCOLORPRIMARIES_</b> — основные цвета;
         <br>
         <b>_AUDIOLANG_</b> — язык аудио; <b>_AUDIOCODEC_</b> — кодек аудио;<br>
         <b>_AUDIOBITRATE_</b> — битрейт аудио; <b>_AUDIOASAMPLERATE_</b> — частота аудио;<br>
@@ -775,18 +775,20 @@
         code = code.replaceAll('_STRINGNAMES_', namesString);
         code = code.replaceAll('_COUNTRY_', animeInfo.country);
         code = code.replaceAll('_YEAR_', animeInfo.season.year);
+        code = code.replaceAll('_YEAR_', animeInfo.season.name);
         code = code.replaceAll('_GENRE_', animeInfo.genres);
         code = code.replaceAll('_TYPE_', animeInfo.type.type);
         code = code.replaceAll('_COUNT_', animeInfo.type.episodes);
         code = code.replaceAll('_DURATION_', animeInfo.type.duration);
         code = code.replaceAll('_DIRECTOR_', animeInfo.director);
         code = code.replaceAll('_STUDIO_', studio);
+        code = code.replaceAll('_STUDIONAME_', null);
         code = code.replaceAll('_DESCRIPTION_', animeInfo.description);
         code = code.replaceAll('_EPISODES_', episodes);
 
         code = code.replaceAll('_VIDEOEXT_', miInfo.videoInfo.fileExt);
         code = code.replaceAll('_VIDEOCODEC_', miInfo.videoInfo.codec);
-        code = code.replaceAll('_VIDEOCODEC_', miInfo.videoInfo.codecProfile);
+        code = code.replaceAll('_VIDEOCODECPROFILE_', miInfo.videoInfo.codecProfile);
         code = code.replaceAll('_VIDEOWIDTH_', miInfo.videoInfo.width);
         code = code.replaceAll('_VIDEOHEIGHT_', miInfo.videoInfo.height);
         code = code.replaceAll('_VIDEOASPECT_', miInfo.videoInfo.aspect);
@@ -803,13 +805,13 @@
             const replacement = miInfo.audioInfo.map((info, index) => {
                 return audioTemplate.trim()
                     .replace("#{index}", index + 1)
-                    .replace("{language}", info.language)
-                    .replace("{codec}", info.codec)
-                    .replace("{bitRate}", info.bitRate)
-                    .replace("{sampleRate}", info.sampleRate)
-                    .replace("{bitDepth}", info.bitDepth)
-                    .replace("{channels}", info.channels)
-                    .replace("{title}", info.title);
+                    .replace("{language}", info.language ? info.language : "{language}")
+                    .replace("{codec}", info.codec ? info.codec : "{codec}")
+                    .replace("{bitRate}", info.bitRate ? info.bitRate : "{bitRate}")
+                    .replace("{sampleRate}", info.sampleRate ? info.sampleRate : "{sampleRate}")
+                    .replace("{bitDepth}", info.bitDepth ? info.bitDepth : "{bitDepth}")
+                    .replace("{channels}", info.channels ? info.channels : "{channels}")
+                    .replace("{title}", info.title ? info.title : "{title}")
             }).join('\n');
 
             code = code.replace(/_USERAUDIO(.*?)USERAUDIO_/, replacement).trim();
@@ -819,13 +821,19 @@
             const replacement = miInfo.textInfo.map((info, index) => {
                 return subsTemplate.trim()
                     .replace("#{index}", index + 1)
-                    .replace("{language}", info.language)
-                    .replace("{format}", info.format)
-                    .replace("{title}", info.title);
+                    .replace("{language}", info.language ? info.language : "{language}")
+                    .replace("{format}", info.format ? info.format : "{format}")
+                    .replace("{title}", info.title ? info.title : "{title}")
             }).join('\n');
 
             code = code.replace(/_USERSUBS(.*?)USERSUBS_/, replacement).trim();
         }
+
+        code = code.replaceAll('_QUALITY_', document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value);
+        code = code.replaceAll('_REAPER_', document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value);
+        code = code.replaceAll('_POSTER_', document.getElementById('poster').value);
+        code = code.replaceAll('_SCREENSHOTS_', document.getElementById('screenshots').value);
+        code = code.replaceAll('_MEDIAINFO_', document.getElementById('60503004a43535a7eb84520612a2e26c').value);
 
         return code;
     }
