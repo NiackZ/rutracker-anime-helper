@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      2.5
+// @version      2.6
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -15,6 +15,8 @@
 
 (function() {
     'use strict';
+    let miInfo = null;
+    let animeInfo = null;
     const fetchData = async (link, apiEndpoint = '/get/anime/info') => {
         const cyclicUrl = 'https://elated-cummerbund-eel.cyclic.app';
         try {
@@ -39,11 +41,14 @@
         const EN = 'EN';
         const REGEX_EN = {
             CODEC: /Format\s+:\s+([^\r\n]+)/,
+            CODEC_PROFILE: /Format profile\s+:\s+([^\r\n]+)/,
             BIT_RATE: /Bit rate\s+:\s+([^\r\n]+)/,
             WIDTH: /Width\s+:\s+(\d+(?:\s+\d*)?)/,
             HEIGHT: /Height\s+:\s+(\d+(?:\s+\d*)?)/,
             ASPECT: /Display aspect ratio\s+:\s+([^\r\n]+)/,
             FRAME_RATE: /Frame rate\s+:\s+([^\r\n]+)/,
+            CHROMA_SUBSAMPLING: /Chroma subsampling\s+:\s+([^\r\n]+)/,
+            COLOR_PRIMARIES: /Color primaries\s+:\s+([^\r\n]+)/,
             BIT_DEPTH: /Bit depth\s+:\s+(\d+)/,
             CHANNELS: /Channel\(s\)\s+:\s+(\d+)/,
             SAMPLING_RATE: /Sampling rate\s+:\s+(.+)/,
@@ -53,11 +58,14 @@
         };
         const REGEX_RU = {
             CODEC: /Формат\s+:\s+([^\r\n]+)/,
+            CODEC_PROFILE: /Профиль формата\s+:\s+([^\r\n]+)/,
             BIT_RATE: /Битрейт\s+:\s+([^\r\n]+)/,
             WIDTH: /Ширина\s+:\s+(\d+(?:\s+\d*)?)/,
             HEIGHT: /Высота\s+:\s+(\d+(?:\s+\d*)?)/,
             ASPECT: /Соотношение сторон\s+:\s+([^\r\n]+)/,
             FRAME_RATE: /Частота кадров\s+:\s+([^\r\n]+)/,
+            CHROMA_SUBSAMPLING: /Субдискретизация насыщенности\s+:\s+([^\r\n]+)/,
+            COLOR_PRIMARIES: /Основные цвета\s+:\s+([^\r\n]+)/,
             BIT_DEPTH: /Битовая глубина\s+:\s+(\d+)/,
             CHANNELS: /Каналы\s+:\s+(\d+)/,
             SAMPLING_RATE: /Частота\s+:\s+(.+)/,
@@ -102,10 +110,13 @@
 
                     return {
                         codec: parseField(videoBlock, regex.CODEC),
+                        codeProfile: parseField(videoBlock, regex.CODEC_PROFILE),
                         width: _width ? _width.replaceAll(" ", "") : null,
                         height: _height ? _height.replaceAll(" ", "") : null,
                         aspect: parseField(videoBlock, regex.ASPECT),
                         fps: _fps ? _fps.split(" ")[0] : null,
+                        chromaSubsampling: parseField(videoBlock, regex.CHROMA_SUBSAMPLING),
+                        colorPrimaries: parseField(videoBlock, regex.COLOR_PRIMARIES),
                         bitDepth: parseField(videoBlock, regex.BIT_DEPTH),
                         bitRate: parseField(videoBlock, regex.BIT_RATE),
                         fileExt: null
@@ -127,6 +138,7 @@
                             codec: parseField(audioBlock, regex.CODEC),
                             bitRate: parseField(audioBlock, regex.BIT_RATE),
                             sampleRate: parseField(audioBlock, regex.SAMPLING_RATE),
+                            bitDepth: parseField(audioBlock, regex.BIT_DEPTH),
                             channels: parseField(audioBlock, regex.CHANNELS),
                             title: parseField(audioBlock, regex.TITLE)
                         }
@@ -224,15 +236,17 @@
         fillButton.value = 'Заполнить';
         fillButton.onclick = async function() {
 
-            try{
+            try {
                 fillButton.disabled = true;
                 const link = document.getElementById('titleLink').value;
                 if (!link) {
                     alert("Вставьте ссылку с сайта world-art");
                 }
                 else {
+                    animeInfo = null;
                     const response = await fetchData(link);
                     if (!!response.anime) {
+                        animeInfo = response.anime;
                         fillFields(response.anime);
                     }
                 }
@@ -374,7 +388,9 @@
             fillButton.value = 'Заполнить тех. данные';
             fillButton.onclick = function() {
                 try{
+                    miInfo = null;
                     const techData = getTechData();
+                    miInfo = techData;
                     console.log(techData);
                     if (techData) {
                         const videoFormat = document.getElementById("video_format");
