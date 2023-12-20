@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      3.3
+// @version      3.4
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -545,6 +545,9 @@ $Screenshots$
         const studio = document.getElementById("c6ed4beb1b80956095e7c0aba867d08f");
         const description = document.getElementById("description");
         const episodeTextArea = document.getElementById("bd78750529cad34e379eca8e6a255d42");
+        description.value = "";
+        director.value = "";
+        episodes.value = "";
         othName.value = "";
         episodeTextArea.value = "";
         if (anime.names.ru) {
@@ -780,27 +783,34 @@ $Screenshots$
             return value !== null && value !== undefined && value !== "";
         }
         const header = () => {
-            const names = Object.keys(animeInfo.names)
-                .filter(key => key !== "kanji")
-                .map(key => animeInfo.names[key])
-                .filter(value => valueIsEmpty(value))
-                .join(" / ");
-
-            const hasRussianAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "русский");
-            const hasChineseAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "китайский");
-            const hasEnglishAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "английский");
-            const hasKazakhAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "казахский");
-            const hasJapaneseAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "японский");
+            const names = [];
+            if (animeInfo.names?.ru) {
+                names.push(animeInfo.names.ru);
+            }
+            if (animeInfo.names?.romaji) {
+                names.push(animeInfo.names.romaji);
+            }
+            if (animeInfo.names?.en) {
+                names.push(animeInfo.names.en);
+            }
+            const hasRussianAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "русский");
+            const hasChineseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "китайский");
+            const hasEnglishAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "английский");
+            const hasKazakhAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "казахский");
+            const hasJapaneseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "японский");
             const hasSubtitles = miInfo.textInfo.length > 0;
 
-            const audioDescription = (hasRussianAudio ? "RUS(int), " : "") +
+            let audioDescription = (hasRussianAudio ? "RUS(int), " : "") +
                 (hasEnglishAudio ? "ENG, " : "") +
                 (hasChineseAudio ? "CHN, " : "")+
                 (hasKazakhAudio ? "KAZ, " : "") +
                 (hasJapaneseAudio ? "JAP" : "") +
                 (hasRussianAudio || hasEnglishAudio || hasChineseAudio || hasKazakhAudio || hasJapaneseAudio ? "+" : "") +
                 (hasSubtitles ? "Sub" : "");
-            return `${names} [${animeInfo.type.shortType}] [${animeInfo.type.episodes} из ${animeInfo.type.episodes}] [${audioDescription}] [${animeInfo.season.year}, ${animeInfo.genres}, BDRip] [${miInfo.videoInfo.height}p]`;
+            if (!audioDescription) {
+                audioDescription="JAP"
+            }
+            return `${names.join(" / ")} [${animeInfo.type.shortType}] [${animeInfo.type.episodes} из ${animeInfo.type.episodes}] [${audioDescription}] [${animeInfo.season.year}, ${animeInfo.genres}, BDRip] [${miInfo.videoInfo.height}p]`;
         }
         const names = () => {
             return formatNames("\n");
