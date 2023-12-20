@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      3.2
+// @version      3.3
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -418,6 +418,7 @@ $Screenshots$
 
         const infoContainer = document.createElement('div');
         infoContainer.style.margin = '15px 0';
+        infoContainer.style.fontSize = '10pt';
         infoContainer.innerHTML = `
         <b>$Header$</b> — заголовок релиза с краткой технической информацией;<br>
         <b>$Names$</b> — названия аниме, каждое название с новой строки <b>$String_names$</b> — названия аниме, выводятся все в одну строку;<br>
@@ -427,16 +428,14 @@ $Screenshots$
         <b>$Count$</b> — количество эпизодов; <b>$Duration$</b> — длительность;<br>
         <b>$Director$</b> — режиссер;<br>
         <b>$Studio$</b> — названия студий со ссылкой в BB формате; <b>$Studio_name$</b> — названия студий;<br>
-        <br>
         <b>$Description$</b> — описание;<br>
-        <br>
         <b>$Episodes$</b> — список эпизодов;<br>
         <br>
         Если поле "Подробные тех. данные" заполнено MediaInfo информацией, то заполняются следующие поля;<br>
         <b>$Video_ext$</b> — формат видео;  <b>$Video_height$</b> — высота видео; <b>$Video_width$</b> — ширина видео; <br>
         <b>$Video_codec$</b> — кодек видео; <b>$Video_codec_profile$</b> — профиль кодека; <b>$Video_aspect$</b> — соотношение сторон; <br>
         <b>$Video_bit_rate$</b> — битрейт видео; <b>$Video_fps$</b> — частота кадров (fps); <b>$Video_bit_depth$</b> — битовая глубина;<br>
-        <b>$Video_chroma_subsampling$</b> — субдискретизация насыщенности; <b>$Video_color_primaries$</b> — основные цвета;
+        <b>$Video_chroma_subsampling$</b> — субдискретизация насыщенности; <b>$Video_color_primaries$</b> — основные цвета;<br>
         <br>
         Поля ниже берутся из формы, если значения заполнены:<br>
         <b>$Quality$</b> — качество видео; <b>$Reaper$</b> — автор рипа;<br>
