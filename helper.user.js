@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      3.1
+// @version      3.2
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -345,9 +345,11 @@ $Screenshots$
         calcTemplateButton.value = 'Сгенерировать описание';
         calcTemplateButton.onclick = async () => {
             const code = generate(localStorage.getItem(localStorageName));
-            await navigator.clipboard.writeText(code);
-            console.info('Сгенерированное описание скопировано в буфер обмена');
-            showNotification('Сгенерированное описание скопировано в буфер обмена');
+            if (code) {
+                await navigator.clipboard.writeText(code);
+                console.info('Сгенерированное описание скопировано в буфер обмена');
+                showNotification('Сгенерированное описание скопировано в буфер обмена');
+            }
         };
 
         setSpan.appendChild(setTemplateButton);
