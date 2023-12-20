@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      2.6
+// @version      2.7
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -17,6 +17,7 @@
     'use strict';
     let miInfo = null;
     let animeInfo = null;
+    const localStorageName = 'animeTemplate';
     const fetchData = async (link, apiEndpoint = '/get/anime/info') => {
         const cyclicUrl = 'https://elated-cummerbund-eel.cyclic.app';
         try {
@@ -279,6 +280,195 @@
         infoSpan.appendChild(link);
         inputsCell.appendChild(infoSpan);
     }
+    const addActionRow = () => {
+        const tbody = document.getElementById('rel-tpl');
+        const newRow = tbody.insertRow(0);
+
+        const actionCell = newRow.insertCell(0);
+        actionCell.colSpan = 2;
+        actionCell.style.textAlign = 'center';
+        actionCell.style.padding = '10px 5px';
+
+        const setSpan = document.createElement('span');
+        setSpan.className = 'rel-el';
+
+        const setTemplateButton = document.createElement('input');
+        setTemplateButton.id = 'setTemplateButton';
+        setTemplateButton.type = 'button';
+        setTemplateButton.style.width = '130px';
+        setTemplateButton.value = 'Настроить шаблон';
+
+        const calcSpan = document.createElement('span');
+        calcSpan.className = 'rel-el';
+
+        const calcTemplateButton = document.createElement('input');
+        calcTemplateButton.disabled = true;
+        calcTemplateButton.id = 'calcTemplateButton';
+        calcTemplateButton.type = 'button';
+        calcTemplateButton.style.width = '165px';
+        calcTemplateButton.value = 'Сгенерировать описание';
+
+        setSpan.appendChild(setTemplateButton);
+        calcSpan.appendChild(calcTemplateButton);
+        actionCell.appendChild(setSpan);
+        actionCell.appendChild(calcSpan);
+    }
+
+    const createModal = () => {
+        // Создаем элементы модального окна
+        const modalContainer = document.createElement('div');
+        modalContainer.style.display = 'none';
+        modalContainer.style.position = 'fixed';
+        modalContainer.style.top = '0';
+        modalContainer.style.left = '0';
+        modalContainer.style.width = '100%';
+        modalContainer.style.height = '100%';
+        modalContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        modalContainer.style.justifyContent = 'center';
+        modalContainer.style.alignItems = 'center';
+
+        const modalContent = document.createElement('div');
+        modalContent.id = "templateModal";
+        modalContent.style.boxShadow = '0 0 10px 1px black'
+        modalContent.style.background = '#fff';
+        modalContent.style.width = '1000px';
+        modalContent.style.minHeight = '400px';
+        modalContent.style.height = '80%';
+        modalContent.style.overflow = 'auto';
+        modalContent.style.padding = '20px';
+        modalContent.style.borderRadius = '8px';
+        modalContent.style.position = 'relative';
+
+        const modalTitle = document.createElement('h1');
+        modalTitle.textContent = 'Шаблон';
+        modalTitle.style.marginBottom = '10px';
+        modalTitle.style.textAlign = 'center';
+        modalContent.appendChild(modalTitle);
+
+        const infoContainer = document.createElement('div');
+        infoContainer.style.margin = '15px 0';
+        infoContainer.innerHTML = `
+        <b>_HEADER_</b> — заголовок релиза с краткой технической информацией;<br>
+        <b>_NAMES_</b> — названия аниме, каждое название с новой строки <b>_STRINGNAMES_</b> — названия аниме, выводятся все в одну строку;<br>
+        <b>_POSTER_</b> — постер;<br>
+        <b>_COUNTRY_</b> — страна; <br>
+        <b>_YEAR_</b> — год выпуска; <b>_SEASON_</b> — сезон;<br>
+        <b>_GENRE_</b> — жанр; <b>_TYPE_</b> — тип;<br>
+        <b>_COUNT_</b> — количество эпизодов; <b>_DURATION_</b> — длительность;<br>
+        <b>_DIRECTOR_</b> — режиссер;<br>
+        <b>_STUDIO_</b> — название студии со ссылкой в BB формате; <b>_STUDIONAME_</b> — название студии;<br>
+        <br>
+        <b>_DESCRIPTION_</b> — описание;<br>
+        <br>
+        <b>_EPISODES_</b> — список эпизодов;<br>
+        <br>
+        Если поле "Подробные тех. данные" заполнено MediaInfo информацией, то заполняются следующие поля;<br>
+        <b>_MEDIAINFO_</b> — отчёт MediaInfo;<br>
+        <b>_VIDEOFORMAT_</b> — формат видео;  <b>_VIDEOHEIGHT_</b> — высота видео; <b>_VIDEOWIDTH_</b> — ширина видео; <br>
+        <b>_VIDEOCODEC_</b> — кодек видео; <b>_VIDEOASPECT_</b> — соотношение сторон; <b>_VIDEOBITRATE_</b> — битрейт видео;<br>
+        <b>_VIDEOFPS_</b> — частота кадров (fps); <b>_VIDEOBITDEPTH_</b> — битовая глубина;<br>
+        <br>
+        <b>_AUDIOLANG_</b> — язык аудио; <b>_AUDIOCODEC_</b> — кодек аудио;<br>
+        <b>_AUDIOBITRATE_</b> — битрейт аудио; <b>_AUDIOASAMPLERATE_</b> — частота аудио;<br>
+        <b>_AUDIOCHANNELS_</b> — количество каналов в аудио; <b>_AUDIOTITLE_</b> — название аудио;<br>
+        <br>
+        <b>_SUBLANG_</b> — язык субтитров; <b>_SUBFORMAT_</b> — формат субтитров; <b>_SUBNAME_</b> — название субтитров;
+    `;
+
+        modalContent.appendChild(infoContainer);
+
+        const templateArea = document.createElement('textarea');
+        templateArea.value = localStorage.getItem(localStorageName);
+        templateArea.rows = 20;
+        templateArea.id = 'templateArea';
+        templateArea.style.width = '100%';
+        templateArea.style.resize = 'vertical';
+        modalContent.appendChild(templateArea);
+
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.justifyContent = 'flex-end';
+        buttonContainer.style.marginTop = '10px'; // Добавим отступ между кнопками и содержимым
+
+        const saveButton = document.createElement('button');
+        saveButton.textContent = 'Сохранить';
+        saveButton.style.marginRight = '10px'; // Добавим отступ между кнопками
+        saveButton.style.backgroundColor = '#547eca';
+        saveButton.style.padding = '5px 10px';
+        saveButton.style.borderRadius = '5px';
+
+        saveButton.addEventListener('click', function () {
+            localStorage.setItem(localStorageName, templateArea.value);
+
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = 'Шаблон сохранен';
+            notification.style.position = 'fixed';
+            notification.style.top = '30px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.padding = '10px';
+            notification.style.backgroundColor = 'green';
+            notification.style.color = 'white';
+            notification.style.borderRadius = '5px';
+            notification.style.opacity = '0'; // Устанавливаем начальную прозрачность
+            notification.style.transition = 'opacity 0.1s ease-in-out'; // Добавляем анимацию
+            document.body.appendChild(notification);
+
+            setTimeout(function () {
+                notification.style.opacity = '1';
+            }, 100);
+
+            setTimeout(function () {
+                notification.style.opacity = '0';
+
+                setTimeout(function () {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 3000);
+        });
+
+        // Создаем кнопку "Закрыть"
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Закрыть';
+        closeButton.style.backgroundColor = '#d67688';
+        closeButton.style.padding = '5px 10px';
+        closeButton.style.borderRadius = '5px';
+        closeButton.addEventListener('click', closeModal);
+
+        buttonContainer.appendChild(saveButton);
+        buttonContainer.appendChild(closeButton);
+        modalContent.appendChild(buttonContainer);
+
+        const closeButtonSymbol = document.createElement('div');
+        closeButtonSymbol.innerHTML = '❌';
+        closeButtonSymbol.style.position = 'absolute';
+        closeButtonSymbol.style.top = '10px';
+        closeButtonSymbol.style.right = '10px';
+        closeButtonSymbol.style.fontSize = '24px';
+        closeButtonSymbol.style.cursor = 'pointer';
+        closeButtonSymbol.addEventListener('click', closeModal);
+
+        modalContent.appendChild(closeButtonSymbol);
+        modalContainer.appendChild(modalContent);
+        document.body.appendChild(modalContainer);
+
+        function openModal() {
+            modalContainer.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modalContainer.style.display = 'none';
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+        }
+
+        const openButton = document.getElementById('setTemplateButton');
+        openButton.addEventListener('click', openModal);
+    }
+
     const setOptionIfExists = (select, value) => {
         const optionExists = Array.from(select.options).some(option => option.value === value);
         if (optionExists) {
@@ -523,5 +713,7 @@
     }
 
     addUrlRow();
+    addActionRow();
     addTechButton();
+    createModal();
 })();
