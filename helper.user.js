@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      2.7
+// @version      2.8
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -111,7 +111,7 @@
 
                     return {
                         codec: parseField(videoBlock, regex.CODEC),
-                        codeProfile: parseField(videoBlock, regex.CODEC_PROFILE),
+                        codecProfile: parseField(videoBlock, regex.CODEC_PROFILE),
                         width: _width ? _width.replaceAll(" ", "") : null,
                         height: _height ? _height.replaceAll(" ", "") : null,
                         aspect: parseField(videoBlock, regex.ASPECT),
@@ -302,18 +302,20 @@
         calcSpan.className = 'rel-el';
 
         const calcTemplateButton = document.createElement('input');
-        calcTemplateButton.disabled = true;
         calcTemplateButton.id = 'calcTemplateButton';
         calcTemplateButton.type = 'button';
         calcTemplateButton.style.width = '165px';
         calcTemplateButton.value = 'Сгенерировать описание';
+        calcTemplateButton.onclick = () => {
+            const code = generate(localStorage.getItem(localStorageName));
+            console.log(code);
+        };
 
         setSpan.appendChild(setTemplateButton);
         calcSpan.appendChild(calcTemplateButton);
         actionCell.appendChild(setSpan);
         actionCell.appendChild(calcSpan);
     }
-
     const createModal = () => {
         // Создаем элементы модального окна
         const modalContainer = document.createElement('div');
@@ -356,7 +358,7 @@
         <b>_GENRE_</b> — жанр; <b>_TYPE_</b> — тип;<br>
         <b>_COUNT_</b> — количество эпизодов; <b>_DURATION_</b> — длительность;<br>
         <b>_DIRECTOR_</b> — режиссер;<br>
-        <b>_STUDIO_</b> — название студии со ссылкой в BB формате; <b>_STUDIONAME_</b> — название студии;<br>
+        <b>_STUDIO_</b> — названия студий со ссылкой в BB формате; <b>_STUDIONAME_</b> — названия студий;<br>
         <br>
         <b>_DESCRIPTION_</b> — описание;<br>
         <br>
@@ -364,7 +366,7 @@
         <br>
         Если поле "Подробные тех. данные" заполнено MediaInfo информацией, то заполняются следующие поля;<br>
         <b>_MEDIAINFO_</b> — отчёт MediaInfo;<br>
-        <b>_VIDEOFORMAT_</b> — формат видео;  <b>_VIDEOHEIGHT_</b> — высота видео; <b>_VIDEOWIDTH_</b> — ширина видео; <br>
+        <b>_VIDEOEXT_</b> — формат видео;  <b>_VIDEOHEIGHT_</b> — высота видео; <b>_VIDEOWIDTH_</b> — ширина видео; <br>
         <b>_VIDEOCODEC_</b> — кодек видео; <b>_VIDEOASPECT_</b> — соотношение сторон; <b>_VIDEOBITRATE_</b> — битрейт видео;<br>
         <b>_VIDEOFPS_</b> — частота кадров (fps); <b>_VIDEOBITDEPTH_</b> — битовая глубина;<br>
         <br>
@@ -468,7 +470,6 @@
         const openButton = document.getElementById('setTemplateButton');
         openButton.addEventListener('click', openModal);
     }
-
     const setOptionIfExists = (select, value) => {
         const optionExists = Array.from(select.options).some(option => option.value === value);
         if (optionExists) {
@@ -710,6 +711,123 @@
         } else {
             console.error("Textarea не найден по указанному идентификатору.");
         }
+    }
+    const generate = (template) => {
+        if (animeInfo == null) {
+            alert("Вставьте ссылку на аниме и нажмите \"Заполнить\"");
+            return;
+        }
+        if (miInfo == null) {
+            alert("Вставьте MediaInfo в поле \"Подробные тех. данные\" и нажмите \"Заполнить тех. данные\"");
+            return;
+        }
+        let code = template;
+        const valueIsEmpty = (value) => {
+            return value !== null && value !== undefined && value !== "";
+        }
+        const header = () => {
+            const names = Object.keys(animeInfo.names)
+                .filter(key => key !== "kanji")
+                .map(key => animeInfo.names[key])
+                .filter(value => valueIsEmpty(value))
+                .join(" / ");
+
+            const hasRussianAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "русский");
+            const hasChineseAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "китайский");
+            const hasEnglishAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "английский");
+            const hasKazakhAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "казахский");
+            const hasJapaneseAudio = miInfo.audioInfo.some(track => track.language.toLowerCase() === "японский");
+            const hasSubtitles = miInfo.textInfo.length > 0;
+
+            const audioDescription = (hasRussianAudio ? "RUS(int), " : "") +
+                (hasEnglishAudio ? "ENG, " : "") +
+                (hasChineseAudio ? "CHN, " : "")+
+                (hasKazakhAudio ? "KAZ, " : "") +
+                (hasJapaneseAudio ? "JAP" : "") +
+                (hasRussianAudio || hasEnglishAudio || hasChineseAudio || hasKazakhAudio || hasJapaneseAudio ? "+" : "") +
+                (hasSubtitles ? "Sub" : "");
+            return `${names} [${animeInfo.type.shortType}] [${animeInfo.type.episodes} из ${animeInfo.type.episodes}] [${audioDescription}] [${animeInfo.season.year}, ${animeInfo.genres}, BDRip] [${miInfo.videoInfo.height}p]`;
+        }
+        const names = () => {
+            return formatNames("\n");
+        };
+        const namesString = () => {
+            return formatNames(" / ");
+        };
+        const formatNames = (separator) => {
+            return Object.values(animeInfo.names)
+                .filter(value => valueIsEmpty(value))
+                .join(separator);
+        };
+        const studio = () => {
+            const formatLink = (name, link) => {
+                return `[url=${link}]${name}[/url]`;
+            };
+
+            return animeInfo.studios.map(studio => formatLink(studio.name, studio.link)).join(', ');
+        };
+        const episodes = () => {
+            return animeInfo.episodes.map((ep, index) => `${index + 1}. ${ep}`).join('\n');
+        }
+
+        code = code.replaceAll('_HEADER_', header);
+        code = code.replaceAll("_NAMES_", names);
+        code = code.replaceAll('_STRINGNAMES_', namesString);
+        code = code.replaceAll('_COUNTRY_', animeInfo.country);
+        code = code.replaceAll('_YEAR_', animeInfo.season.year);
+        code = code.replaceAll('_GENRE_', animeInfo.genres);
+        code = code.replaceAll('_TYPE_', animeInfo.type.type);
+        code = code.replaceAll('_COUNT_', animeInfo.type.episodes);
+        code = code.replaceAll('_DURATION_', animeInfo.type.duration);
+        code = code.replaceAll('_DIRECTOR_', animeInfo.director);
+        code = code.replaceAll('_STUDIO_', studio);
+        code = code.replaceAll('_DESCRIPTION_', animeInfo.description);
+        code = code.replaceAll('_EPISODES_', episodes);
+
+        code = code.replaceAll('_VIDEOEXT_', miInfo.videoInfo.fileExt);
+        code = code.replaceAll('_VIDEOCODEC_', miInfo.videoInfo.codec);
+        code = code.replaceAll('_VIDEOCODEC_', miInfo.videoInfo.codecProfile);
+        code = code.replaceAll('_VIDEOWIDTH_', miInfo.videoInfo.width);
+        code = code.replaceAll('_VIDEOHEIGHT_', miInfo.videoInfo.height);
+        code = code.replaceAll('_VIDEOASPECT_', miInfo.videoInfo.aspect);
+        code = code.replaceAll('_VIDEOCHROMASUBSAMPLING_', miInfo.videoInfo.chromaSubsampling);
+        code = code.replaceAll('_VIDEOCOLORPRIMARIES_', miInfo.videoInfo.colorPrimaries);
+        code = code.replaceAll('_VIDEOBITRATE_', miInfo.videoInfo.bitRate);
+        code = code.replaceAll('_VIDEOFPS_', miInfo.videoInfo.fps);
+        code = code.replaceAll('_VIDEOBITDEPTH_', miInfo.videoInfo.bitDepth);
+
+        const matchAudio = code.match(/_USERAUDIO(.*?)USERAUDIO_/);
+        const matchSubs = code.match(/_USERSUBS(.*?)USERSUBS_/);
+        if (matchAudio) {
+            const audioTemplate = matchAudio[1];
+            const replacement = miInfo.audioInfo.map((info, index) => {
+                return audioTemplate.trim()
+                    .replace("#{index}", index + 1)
+                    .replace("{language}", info.language)
+                    .replace("{codec}", info.codec)
+                    .replace("{bitRate}", info.bitRate)
+                    .replace("{sampleRate}", info.sampleRate)
+                    .replace("{bitDepth}", info.bitDepth)
+                    .replace("{channels}", info.channels)
+                    .replace("{title}", info.title);
+            }).join('\n');
+
+            code = code.replace(/_USERAUDIO(.*?)USERAUDIO_/, replacement).trim();
+        }
+        if (matchSubs) {
+            const subsTemplate = matchSubs[1];
+            const replacement = miInfo.textInfo.map((info, index) => {
+                return subsTemplate.trim()
+                    .replace("#{index}", index + 1)
+                    .replace("{language}", info.language)
+                    .replace("{format}", info.format)
+                    .replace("{title}", info.title);
+            }).join('\n');
+
+            code = code.replace(/_USERSUBS(.*?)USERSUBS_/, replacement).trim();
+        }
+
+        return code;
     }
 
     addUrlRow();
