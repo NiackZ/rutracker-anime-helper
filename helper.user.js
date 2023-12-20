@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      2.9
+// @version      3.0
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -17,7 +17,43 @@
     'use strict';
     let miInfo = null;
     let animeInfo = null;
+    const defaultTemplate = `$Header$
+[align=center][size=24]$Names$[/size][/align]
+
+[img=right]$Poster$[/img]
+
+[b]Страна[/b]: $Country$
+[b]Год выпуска[/b]: $Year$
+[b]Жанр[/b]: $Genre$
+[b]Тип[/b]: $Type$
+[b]Продолжительность[/b]: $Count$ эп, $Duration$
+[b]Режиссер[/b]: $Director$
+[b]Студия[/b]: $Studio$
+
+[b]Описание[/b]: $Description$
+
+[b]Субтитры[/b]:
+_USERSUBS [b]#{index}[/b]: {language}, {format}, [color=blue]{title}[/color] USERSUBS_
+
+[b]Качество[/b]: $Quality$ [$Reaper$]
+[b]Формат видео[/b]: $Video_ext$
+[b]Видео[/b]: [color=red]$Video_codec$[/color], $Video_width$x$Video_height$ ($Video_aspect$), $Video_bit_rate$, $Video_fps$ fps, [color=red]$Video_bit_depth$bit[/color]
+[b]Аудио[/b]:
+_USERAUDIO [b]#{index}[/b]: {language}, {codec}, {bitRate}, {sampleRate}, {channels} канала - [color=blue]{title}[/color] USERAUDIO_
+
+[spoiler="Подробные тех. данные"][pre]$MediaInfo$[/pre][/spoiler]
+
+[spoiler="Список эпизодов"]
+$Episodes$
+[/spoiler]
+
+[spoiler="Скриншоты"]
+$Screenshots$
+[/spoiler]`;
     const localStorageName = 'animeTemplate';
+    if (localStorage.getItem(localStorageName) === null) {
+        localStorage.setItem(localStorageName, defaultTemplate);
+    }
     const fetchData = async (link, apiEndpoint = '/get/anime/info') => {
         const cyclicUrl = 'https://elated-cummerbund-eel.cyclic.app';
         try {
@@ -306,9 +342,10 @@
         calcTemplateButton.type = 'button';
         calcTemplateButton.style.width = '165px';
         calcTemplateButton.value = 'Сгенерировать описание';
-        calcTemplateButton.onclick = () => {
+        calcTemplateButton.onclick = async () => {
             const code = generate(localStorage.getItem(localStorageName));
-            console.log(code);
+            await navigator.clipboard.writeText(code);
+            console.info('Сгенерированное описание скопировано в буфер обмена');
         };
 
         setSpan.appendChild(setTemplateButton);
@@ -350,31 +387,43 @@
         const infoContainer = document.createElement('div');
         infoContainer.style.margin = '15px 0';
         infoContainer.innerHTML = `
-        <b>_HEADER_</b> — заголовок релиза с краткой технической информацией;<br>
-        <b>_NAMES_</b> — названия аниме, каждое название с новой строки <b>_STRINGNAMES_</b> — названия аниме, выводятся все в одну строку;<br>
-        <b>_POSTER_</b> — постер;<br>
-        <b>_COUNTRY_</b> — страна; <br>
-        <b>_YEAR_</b> — год выпуска; <b>_SEASON_</b> — сезон;<br>
-        <b>_GENRE_</b> — жанр; <b>_TYPE_</b> — тип;<br>
-        <b>_COUNT_</b> — количество эпизодов; <b>_DURATION_</b> — длительность;<br>
-        <b>_DIRECTOR_</b> — режиссер;<br>
-        <b>_STUDIO_</b> — названия студий со ссылкой в BB формате; <b>_STUDIONAME_</b> — названия студий;<br>
+        <b>$Header$</b> — заголовок релиза с краткой технической информацией;<br>
+        <b>$Names$</b> — названия аниме, каждое название с новой строки <b>$String_names$</b> — названия аниме, выводятся все в одну строку;<br>
+        <b>$Country$</b> — страна; <br>
+        <b>$Year$</b> — год выпуска; <b>$Season$</b> — сезон;<br>
+        <b>$Genre$</b> — жанр; <b>$Type$</b> — тип;<br>
+        <b>$Count$</b> — количество эпизодов; <b>$Duration$</b> — длительность;<br>
+        <b>$Director$</b> — режиссер;<br>
+        <b>$Studio$</b> — названия студий со ссылкой в BB формате; <b>$Studio_name$</b> — названия студий;<br>
         <br>
-        <b>_DESCRIPTION_</b> — описание;<br>
+        <b>$Description$</b> — описание;<br>
         <br>
-        <b>_EPISODES_</b> — список эпизодов;<br>
+        <b>$Episodes$</b> — список эпизодов;<br>
         <br>
         Если поле "Подробные тех. данные" заполнено MediaInfo информацией, то заполняются следующие поля;<br>
-        <b>_VIDEOEXT_</b> — формат видео;  <b>_VIDEOHEIGHT_</b> — высота видео; <b>_VIDEOWIDTH_</b> — ширина видео; <br>
-        <b>_VIDEOCODEC_</b> — кодек видео; <b>_VIDEOCODECPROFILE_</b> — профиль кодека; <b>_VIDEOASPECT_</b> — соотношение сторон; <br>
-        <b>_VIDEOBITRATE_</b> — битрейт видео; <b>_VIDEOFPS_</b> — частота кадров (fps); <b>_VIDEOBITDEPTH_</b> — битовая глубина;<br>
-        <b>_VIDEOCHROMASUBSAMPLING_</b> — субдискретизация насыщенности; <b>_VIDEOCOLORPRIMARIES_</b> — основные цвета;
+        <b>$Video_ext$</b> — формат видео;  <b>$Video_height$</b> — высота видео; <b>$Video_width$</b> — ширина видео; <br>
+        <b>$Video_codec$</b> — кодек видео; <b>$Video_codec_profile$</b> — профиль кодека; <b>$Video_aspect$</b> — соотношение сторон; <br>
+        <b>$Video_bit_rate$</b> — битрейт видео; <b>$Video_fps$</b> — частота кадров (fps); <b>$Video_bit_depth$</b> — битовая глубина;<br>
+        <b>$Video_chroma_subsampling$</b> — субдискретизация насыщенности; <b>$Video_color_primaries$</b> — основные цвета;
         <br>
-        <b>_AUDIOLANG_</b> — язык аудио; <b>_AUDIOCODEC_</b> — кодек аудио;<br>
-        <b>_AUDIOBITRATE_</b> — битрейт аудио; <b>_AUDIOASAMPLERATE_</b> — частота аудио;<br>
-        <b>_AUDIOCHANNELS_</b> — количество каналов в аудио; <b>_AUDIOTITLE_</b> — название аудио;<br>
+        Поля ниже берутся из формы, если значения заполнены:<br>
+        <b>$Quality$</b> — качество видео; <b>$Reaper$</b> — автор рипа;<br>
+        <b>$Poster$</b> — ссылка на постер; <br>
+        <b>$Screenshots$</b> — скриншоты; <b>$MediaInfo$</b> — тех. данные;<br>
         <br>
-        <b>_SUBLANG_</b> — язык субтитров; <b>_SUBFORMAT_</b> — формат субтитров; <b>_SUBNAME_</b> — название субтитров;
+        <b>_USERAUDIO</b> — начало блока аудио; <b>USERAUDIO_</b> — конец блока аудио;<br>
+        <br>
+        Внутри блока можно сформировать свой шаблон построения дорожки с аудио:<br>
+        <b>{index}</b> — порядоковый номер <b>{language}</b> — язык;<br>
+        <b>{codec}</b> — кодек; <b>{bitRate}</b> — битрейт; <br>
+        <b>{sampleRate}</b> — частота; <b>{bitDepth}</b> — битовая глубина;<br>
+        <b>{channels}</b> — количество каналов; <b>{title}</b> — название;<br>
+        <br>
+        <b>_USERSUBS</b> — начало блока субтитров; <b>USERSUBS_</b> — конец блока субтитров;<br>
+        <br>
+        Внутри блока можно сформировать свой шаблон построения дорожки с аудио:<br>
+        <b>{index}</b> — порядоковый номер <b>{language}</b> — язык;<br>
+        <b>{format}</b> — формат субтитров; <b>{title}</b> — название;<br>
     `;
 
         modalContent.appendChild(infoContainer);
@@ -770,33 +819,33 @@
             return animeInfo.episodes.map((ep, index) => `${index + 1}. ${ep}`).join('\n');
         }
 
-        code = code.replaceAll('_HEADER_', header);
-        code = code.replaceAll("_NAMES_", names);
-        code = code.replaceAll('_STRINGNAMES_', namesString);
-        code = code.replaceAll('_COUNTRY_', animeInfo.country);
-        code = code.replaceAll('_YEAR_', animeInfo.season.year);
-        code = code.replaceAll('_YEAR_', animeInfo.season.name);
-        code = code.replaceAll('_GENRE_', animeInfo.genres);
-        code = code.replaceAll('_TYPE_', animeInfo.type.type);
-        code = code.replaceAll('_COUNT_', animeInfo.type.episodes);
-        code = code.replaceAll('_DURATION_', animeInfo.type.duration);
-        code = code.replaceAll('_DIRECTOR_', animeInfo.director);
-        code = code.replaceAll('_STUDIO_', studio);
-        code = code.replaceAll('_STUDIONAME_', null);
-        code = code.replaceAll('_DESCRIPTION_', animeInfo.description);
-        code = code.replaceAll('_EPISODES_', episodes);
+        code = code.replaceAll('$Header$', header);
+        code = code.replaceAll("$Names$", names);
+        code = code.replaceAll('$String_names$', namesString);
+        code = code.replaceAll('$Country$', animeInfo.country);
+        code = code.replaceAll('$Year$', animeInfo.season.year);
+        code = code.replaceAll('$Season$', animeInfo.season.name);
+        code = code.replaceAll('$Genre$', animeInfo.genres);
+        code = code.replaceAll('$Type$', animeInfo.type.type);
+        code = code.replaceAll('$Count$', animeInfo.type.episodes);
+        code = code.replaceAll('$Duration$', animeInfo.type.duration);
+        code = code.replaceAll('$Director$', animeInfo.director);
+        code = code.replaceAll('$Studio$', studio);
+        code = code.replaceAll('$Studio_name$', null);
+        code = code.replaceAll('$Description$', animeInfo.description);
+        code = code.replaceAll('$Episodes$', episodes);
 
-        code = code.replaceAll('_VIDEOEXT_', miInfo.videoInfo.fileExt);
-        code = code.replaceAll('_VIDEOCODEC_', miInfo.videoInfo.codec);
-        code = code.replaceAll('_VIDEOCODECPROFILE_', miInfo.videoInfo.codecProfile);
-        code = code.replaceAll('_VIDEOWIDTH_', miInfo.videoInfo.width);
-        code = code.replaceAll('_VIDEOHEIGHT_', miInfo.videoInfo.height);
-        code = code.replaceAll('_VIDEOASPECT_', miInfo.videoInfo.aspect);
-        code = code.replaceAll('_VIDEOCHROMASUBSAMPLING_', miInfo.videoInfo.chromaSubsampling);
-        code = code.replaceAll('_VIDEOCOLORPRIMARIES_', miInfo.videoInfo.colorPrimaries);
-        code = code.replaceAll('_VIDEOBITRATE_', miInfo.videoInfo.bitRate);
-        code = code.replaceAll('_VIDEOFPS_', miInfo.videoInfo.fps);
-        code = code.replaceAll('_VIDEOBITDEPTH_', miInfo.videoInfo.bitDepth);
+        code = code.replaceAll('$Video_ext$', miInfo.videoInfo.fileExt);
+        code = code.replaceAll('$Video_codec$', miInfo.videoInfo.codec);
+        code = code.replaceAll('$Video_codec_profile$', miInfo.videoInfo.codecProfile);
+        code = code.replaceAll('$Video_width$', miInfo.videoInfo.width);
+        code = code.replaceAll('$Video_height$', miInfo.videoInfo.height);
+        code = code.replaceAll('$Video_aspect$', miInfo.videoInfo.aspect);
+        code = code.replaceAll('$Video_chroma_subsampling$', miInfo.videoInfo.chromaSubsampling);
+        code = code.replaceAll('$Video_color_primaries$', miInfo.videoInfo.colorPrimaries);
+        code = code.replaceAll('$Video_bit_rate$', miInfo.videoInfo.bitRate);
+        code = code.replaceAll('$Video_fps$', miInfo.videoInfo.fps);
+        code = code.replaceAll('$Video_bit_depth$', miInfo.videoInfo.bitDepth);
 
         const matchAudio = code.match(/_USERAUDIO(.*?)USERAUDIO_/);
         const matchSubs = code.match(/_USERSUBS(.*?)USERSUBS_/);
@@ -804,7 +853,7 @@
             const audioTemplate = matchAudio[1];
             const replacement = miInfo.audioInfo.map((info, index) => {
                 return audioTemplate.trim()
-                    .replace("#{index}", index + 1)
+                    .replace("{index}", index + 1)
                     .replace("{language}", info.language ? info.language : "{language}")
                     .replace("{codec}", info.codec ? info.codec : "{codec}")
                     .replace("{bitRate}", info.bitRate ? info.bitRate : "{bitRate}")
@@ -820,7 +869,7 @@
             const subsTemplate = matchSubs[1];
             const replacement = miInfo.textInfo.map((info, index) => {
                 return subsTemplate.trim()
-                    .replace("#{index}", index + 1)
+                    .replace("{index}", index + 1)
                     .replace("{language}", info.language ? info.language : "{language}")
                     .replace("{format}", info.format ? info.format : "{format}")
                     .replace("{title}", info.title ? info.title : "{title}")
@@ -829,11 +878,11 @@
             code = code.replace(/_USERSUBS(.*?)USERSUBS_/, replacement).trim();
         }
 
-        code = code.replaceAll('_QUALITY_', document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value);
-        code = code.replaceAll('_REAPER_', document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value);
-        code = code.replaceAll('_POSTER_', document.getElementById('poster').value);
-        code = code.replaceAll('_SCREENSHOTS_', document.getElementById('screenshots').value);
-        code = code.replaceAll('_MEDIAINFO_', document.getElementById('60503004a43535a7eb84520612a2e26c').value);
+        code = code.replaceAll('$Quality$', document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value);
+        code = code.replaceAll('$Reaper$', document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value);
+        code = code.replaceAll('$Poster$', document.getElementById('poster').value);
+        code = code.replaceAll('$Screenshots$', document.getElementById('screenshots').value);
+        code = code.replaceAll('$MediaInfo$', document.getElementById('60503004a43535a7eb84520612a2e26c').value);
 
         return code;
     }
