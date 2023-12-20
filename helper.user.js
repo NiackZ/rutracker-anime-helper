@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      3.0
+// @version      3.1
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -336,6 +336,7 @@ $Screenshots$
 
         const calcSpan = document.createElement('span');
         calcSpan.className = 'rel-el';
+        calcSpan.style.position = 'relative';
 
         const calcTemplateButton = document.createElement('input');
         calcTemplateButton.id = 'calcTemplateButton';
@@ -346,6 +347,7 @@ $Screenshots$
             const code = generate(localStorage.getItem(localStorageName));
             await navigator.clipboard.writeText(code);
             console.info('Сгенерированное описание скопировано в буфер обмена');
+            showNotification('Сгенерированное описание скопировано в буфер обмена');
         };
 
         setSpan.appendChild(setTemplateButton);
@@ -353,8 +355,36 @@ $Screenshots$
         actionCell.appendChild(setSpan);
         actionCell.appendChild(calcSpan);
     }
+    const showNotification = (message) => {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        notification.style.position = 'fixed';
+        notification.style.top = '30px';
+        notification.style.left = '50%';
+        notification.style.transform = 'translateX(-50%)';
+        notification.style.padding = '10px';
+        notification.style.backgroundColor = 'green';
+        notification.style.color = 'white';
+        notification.style.borderRadius = '5px';
+        notification.style.opacity = '0'; // Устанавливаем начальную прозрачность
+        notification.style.transition = 'opacity 0.1s ease-in-out'; // Добавляем анимацию
+        document.body.appendChild(notification);
+
+        setTimeout(function () {
+            notification.style.opacity = '1';
+        }, 100);
+
+        setTimeout(function () {
+            notification.style.opacity = '0';
+
+            setTimeout(function () {
+                document.body.removeChild(notification);
+            }, 500);
+        }, 3000);
+    }
     const createModal = () => {
-        // Создаем элементы модального окна
+
         const modalContainer = document.createElement('div');
         modalContainer.style.display = 'none';
         modalContainer.style.position = 'fixed';
@@ -450,33 +480,7 @@ $Screenshots$
 
         saveButton.addEventListener('click', function () {
             localStorage.setItem(localStorageName, templateArea.value);
-
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = 'Шаблон сохранен';
-            notification.style.position = 'fixed';
-            notification.style.top = '30px';
-            notification.style.left = '50%';
-            notification.style.transform = 'translateX(-50%)';
-            notification.style.padding = '10px';
-            notification.style.backgroundColor = 'green';
-            notification.style.color = 'white';
-            notification.style.borderRadius = '5px';
-            notification.style.opacity = '0'; // Устанавливаем начальную прозрачность
-            notification.style.transition = 'opacity 0.1s ease-in-out'; // Добавляем анимацию
-            document.body.appendChild(notification);
-
-            setTimeout(function () {
-                notification.style.opacity = '1';
-            }, 100);
-
-            setTimeout(function () {
-                notification.style.opacity = '0';
-
-                setTimeout(function () {
-                    document.body.removeChild(notification);
-                }, 500);
-            }, 3000);
+            showNotification('Шаблон сохранен');
         });
 
         // Создаем кнопку "Закрыть"
