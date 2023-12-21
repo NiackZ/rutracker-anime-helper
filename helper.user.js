@@ -72,7 +72,7 @@ $Screenshots$
         } catch (error) {
             console.error('Ошибка: ', error.message);
         }
-    };
+    }
     const MiParser = (miData) => {
         const RU = 'RU';
         const EN = 'EN';
@@ -130,6 +130,15 @@ $Screenshots$
             }
             return null;
         }
+        const enSampleRate = (inputString) => {
+            const replacements = {
+                'К': 'k',
+                'Гц': 'Hz'
+            };
+
+            const regex = new RegExp(Object.keys(replacements).join('|'), 'g');
+            return inputString.replace(regex, match => replacements[match]).replaceAll(',', '.');
+        }
         const getFileExt = (generalBlockMatch, lang) => {
             if (generalBlockMatch) {
                 const generalBlock = generalBlockMatch[1].trim();
@@ -137,7 +146,7 @@ $Screenshots$
                 return fileName.split('.').pop().toUpperCase();
             }
             return null;
-        };
+        }
         const getVideoInfo = (videoBlockMatch, lang) => {
             if (videoBlockMatch) {
                 const parseVideoBlock = (videoBlock, regex) => {
@@ -170,11 +179,12 @@ $Screenshots$
                 const parseAudioBlock = (blocks, regex) => {
                     return Array.from(blocks).map(audioBlockMatch => {
                         const audioBlock = audioBlockMatch[1].trim();
+                        const sampleRate = parseField(audioBlock, regex.SAMPLING_RATE);
                         return {
                             language: translateLanguage(parseField(audioBlock, regex.LANGUAGE)),
                             codec: parseField(audioBlock, regex.CODEC),
                             bitRate: parseField(audioBlock, regex.BIT_RATE),
-                            sampleRate: parseField(audioBlock, regex.SAMPLING_RATE),
+                            sampleRate: enSampleRate(sampleRate),
                             bitDepth: parseField(audioBlock, regex.BIT_DEPTH),
                             channels: parseField(audioBlock, regex.CHANNELS),
                             title: parseField(audioBlock, regex.TITLE)
@@ -529,7 +539,7 @@ $Screenshots$
         if (optionExists) {
             select.value = value;
         }
-    };
+    }
     const fillFields = (anime) => {
         console.log(anime);
         const rusName = document.getElementById("title_rus");
