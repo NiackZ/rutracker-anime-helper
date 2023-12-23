@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      3.7
+// @version      3.8
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -39,7 +39,7 @@ _USERSUBS [b]#{index}[/b]: {language}, {format}, [color=blue]{title}[/color] USE
 [b]Формат видео[/b]: $Video_ext$
 [b]Видео[/b]: [color=red]$Video_codec$[/color], $Video_width$x$Video_height$ ($Video_aspect$), $Video_bit_rate$, $Video_fps$ fps, [color=red]$Video_bit_depth$bit[/color]
 [b]Аудио[/b]:
-_USERAUDIO [b]#{index}[/b]: {language}, {codec}, {bitRate}, {sampleRate}, {channels} канала - [color=blue]{title}[/color] USERAUDIO_
+_USERAUDIO [b]#{index}[/b]: [img=1em]{flag}[/img] {language}, {codec}, {bitRate}, {sampleRate}, {channels} канала - [color=blue]{title}[/color] USERAUDIO_
 
 [spoiler="Подробные тех. данные"][pre]$MediaInfo$[/pre][/spoiler]
 
@@ -434,7 +434,7 @@ $Screenshots$
         <b>$Genre$</b> — жанр; <b>$Type$</b> — тип;<br>
         <b>$Count$</b> — количество эпизодов; <b>$Duration$</b> — длительность;<br>
         <b>$Director$</b> — режиссер;<br>
-        <b>$Studio$</b> — названия студий со ссылкой в BB формате; <b>$Studio_name$</b> — названия студий;<br>
+        <b>$Studio$</b> — названия студий со ссылкой в BB формате; <b>$Studio_names$</b> — названия студий;<br>
         <b>$Description$</b> — описание;<br>
         <b>$Episodes$</b> — список эпизодов;<br>
         <br>
@@ -452,7 +452,7 @@ $Screenshots$
         <b>_USERAUDIO</b> — начало блока аудио; <b>USERAUDIO_</b> — конец блока аудио;<br>
         <br>
         Внутри блока можно сформировать свой шаблон дорожки с аудио:<br>
-        <b>{index}</b> — порядоковый номер <b>{language}</b> — язык;<br>
+        <b>{index}</b> — порядоковый номер <b>{language}</b> — язык; <b>{flag}</b> — ссылка на флаг;<br>
         <b>{codec}</b> — кодек; <b>{bitRate}</b> — битрейт; <br>
         <b>{sampleRate}</b> — частота; <b>{bitDepth}</b> — битовая глубина;<br>
         <b>{channels}</b> — количество каналов; <b>{title}</b> — название;<br>
@@ -460,8 +460,11 @@ $Screenshots$
         <b>_USERSUBS</b> — начало блока субтитров; <b>USERSUBS_</b> — конец блока субтитров;<br>
         <br>
         Внутри блока можно сформировать свой шаблон строки субтитров:<br>
-        <b>{index}</b> — порядоковый номер <b>{language}</b> — язык;<br>
+        <b>{index}</b> — порядоковый номер; <b>{language}</b> — язык; <b>{flag}</b> — ссылка на флаг с static.rutracker.cc;<br>
         <b>{format}</b> — формат субтитров; <b>{title}</b> — название;<br>
+        <br>
+        <i>{language}</i> — поддерживает следующие языки: русский, английский, японский, китайский, казахский;<br>
+        <i>{flag}</i> — поддерживает флаги: русский, английский, японский;<br>
     `;
 
         modalContent.appendChild(infoContainer);
@@ -830,17 +833,25 @@ $Screenshots$
                 .filter(value => valueIsEmpty(value))
                 .join(separator);
         };
-        const studio = () => {
-            const formatLink = (name, link) => {
-                return `[url=${link}]${name}[/url]`;
-            };
 
-            return animeInfo.studios.map(studio => formatLink(studio.name, studio.link)).join(', ');
-        };
+        const formatLink = (name, link) => `[url=${link}]${name}[/url]`;
+
+        const studioNames = () => animeInfo.studios.map(studio => studio.name).join(', ');
+
+        const studio = () => animeInfo.studios.map(studio => formatLink(studio.name, studio.link)).join(', ');
+
         const episodes = () => {
             return animeInfo.episodes.map((ep, index) => `${index + 1}. ${ep}`).join('\n');
         }
         const getFlagByLang = (lang) => {
+            switch (lang) {
+                case LANG.JAP:
+                    return 'https://static.rutracker.cc/flags/87.gif';
+                case LANG.RUS:
+                    return 'https://static.rutracker.cc/flags/143.gif';
+                case LANG.ENG:
+                    return 'https://static.rutracker.cc/flags/1.gif';
+            }
             return null;
         }
 
@@ -856,7 +867,7 @@ $Screenshots$
         code = code.replaceAll('$Duration$', animeInfo.type.duration);
         code = code.replaceAll('$Director$', animeInfo.director);
         code = code.replaceAll('$Studio$', studio);
-        code = code.replaceAll('$Studio_name$', null);
+        code = code.replaceAll('$Studio_names$', studioNames);
         code = code.replaceAll('$Description$', animeInfo.description);
         code = code.replaceAll('$Episodes$', episodes);
 
@@ -877,9 +888,10 @@ $Screenshots$
         if (matchAudio) {
             const audioTemplate = matchAudio[1];
             const replacement = miInfo.audioInfo.map((info, index) => {
+                const flag = getFlagByLang(info.language);
                 return audioTemplate.trim()
                     .replace("{index}", index + 1)
-                    .replace("{flag}", getFlagByLang(info.language))
+                    .replace("{flag}", flag ? flag : "{flag}")
                     .replace("{language}", info.language ? info.language : "{language}")
                     .replace("{codec}", info.codec ? info.codec : "{codec}")
                     .replace("{bitRate}", info.bitRate ? info.bitRate : "{bitRate}")
@@ -894,8 +906,10 @@ $Screenshots$
         if (matchSubs) {
             const subsTemplate = matchSubs[1];
             const replacement = miInfo.textInfo.map((info, index) => {
+                const flag = getFlagByLang(info.language);
                 return subsTemplate.trim()
                     .replace("{index}", index + 1)
+                    .replace("{flag}", flag ? flag : "{flag}")
                     .replace("{language}", info.language ? info.language : "{language}")
                     .replace("{format}", info.format ? info.format : "{format}")
                     .replace("{title}", info.title ? info.title : "{title}")
