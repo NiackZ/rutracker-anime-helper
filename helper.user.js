@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      3.6
+// @version      3.7
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -51,6 +51,13 @@ $Episodes$
 $Screenshots$
 [/spoiler]`;
     const localStorageName = 'animeTemplate';
+    const LANG = {
+        RUS: "Русский",
+        ENG: "Английский",
+        CHN: "Китайский",
+        KAZ: "Казахский",
+        JAP: "Японский"
+    }
     if (localStorage.getItem(localStorageName) === null) {
         localStorage.setItem(localStorageName, defaultTemplate);
     }
@@ -119,11 +126,11 @@ $Screenshots$
             if (lang) {
                 switch (lang.toLowerCase()) {
                     case "russian":
-                        return "Русский";
+                        return LANG.RUS;
                     case "japanese":
-                        return "Японский";
+                        return LANG.JAP;
                     case "english":
-                        return "Английский";
+                        return LANG.ENG;
                     default:
                         return lang;
                 }
@@ -444,7 +451,7 @@ $Screenshots$
         <br>
         <b>_USERAUDIO</b> — начало блока аудио; <b>USERAUDIO_</b> — конец блока аудио;<br>
         <br>
-        Внутри блока можно сформировать свой шаблон построения дорожки с аудио:<br>
+        Внутри блока можно сформировать свой шаблон дорожки с аудио:<br>
         <b>{index}</b> — порядоковый номер <b>{language}</b> — язык;<br>
         <b>{codec}</b> — кодек; <b>{bitRate}</b> — битрейт; <br>
         <b>{sampleRate}</b> — частота; <b>{bitDepth}</b> — битовая глубина;<br>
@@ -452,7 +459,7 @@ $Screenshots$
         <br>
         <b>_USERSUBS</b> — начало блока субтитров; <b>USERSUBS_</b> — конец блока субтитров;<br>
         <br>
-        Внутри блока можно сформировать свой шаблон построения дорожки с аудио:<br>
+        Внутри блока можно сформировать свой шаблон строки субтитров:<br>
         <b>{index}</b> — порядоковый номер <b>{language}</b> — язык;<br>
         <b>{format}</b> — формат субтитров; <b>{title}</b> — название;<br>
     `;
@@ -725,8 +732,8 @@ $Screenshots$
                                     audioInfo.push(`${audio.channels} канала`);
                                 }
                                 audioBlock.audio.value = audioInfo.join(', ');
-                                setOptionIfExists(audioBlock.lang, audio.language === "Русский"
-                                    ? 'Русский (в составе контейнера)'
+                                setOptionIfExists(audioBlock.lang, audio.language === LANG.RUS
+                                    ? `${LANG.RUS} (в составе контейнера)`
                                     : audio.language
                                 );
                                 if (audio?.title) {
@@ -739,7 +746,6 @@ $Screenshots$
                                 const text = techData.textInfo[i];
                                 const textBlock = textField[i];
                                 if (!textBlock) break;
-                                //Русский, ASS, Полные + Надписи - Crunchyroll (в составе контейнера)
                                 const textInfo = [];
                                 if (text?.language) {
                                     textInfo.push(text.language);
@@ -782,6 +788,7 @@ $Screenshots$
         const valueIsEmpty = (value) => {
             return value !== null && value !== undefined && value !== "";
         }
+        const qualityValue = document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value;
         const header = () => {
             const names = [];
             if (animeInfo.names?.ru) {
@@ -793,11 +800,11 @@ $Screenshots$
             if (animeInfo.names?.en) {
                 names.push(animeInfo.names.en);
             }
-            const hasRussianAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "русский");
-            const hasChineseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "китайский");
-            const hasEnglishAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "английский");
-            const hasKazakhAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "казахский");
-            const hasJapaneseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === "японский");
+            const hasRussianAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.RUS.toLowerCase());
+            const hasChineseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.CHN.toLowerCase());
+            const hasEnglishAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.ENG.toLowerCase());
+            const hasKazakhAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.KAZ.toLowerCase());
+            const hasJapaneseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.JAP.toLowerCase());
             const hasSubtitles = miInfo.textInfo.length > 0;
 
             let audioDescription = (hasRussianAudio ? "RUS(int), " : "") +
@@ -810,7 +817,7 @@ $Screenshots$
             if (!audioDescription) {
                 audioDescription="JAP"
             }
-            return `${names.join(" / ")} [${animeInfo.type.shortType}] [${animeInfo.type.episodes} из ${animeInfo.type.episodes}] [${audioDescription}] [${animeInfo.season.year}, ${animeInfo.genres}, BDRip] [${miInfo.videoInfo.height}p]`;
+            return `${names.join(" / ")} [${animeInfo.type.shortType}] [${animeInfo.type.episodes} из ${animeInfo.type.episodes}] [${audioDescription}] [${animeInfo.season.year}, ${animeInfo.genres}, ${qualityValue}] [${miInfo.videoInfo.height}p]`;
         }
         const names = () => {
             return formatNames("\n");
@@ -832,6 +839,9 @@ $Screenshots$
         };
         const episodes = () => {
             return animeInfo.episodes.map((ep, index) => `${index + 1}. ${ep}`).join('\n');
+        }
+        const getFlagByLang = (lang) => {
+            return null;
         }
 
         code = code.replaceAll('$Header$', header);
@@ -869,6 +879,7 @@ $Screenshots$
             const replacement = miInfo.audioInfo.map((info, index) => {
                 return audioTemplate.trim()
                     .replace("{index}", index + 1)
+                    .replace("{flag}", getFlagByLang(info.language))
                     .replace("{language}", info.language ? info.language : "{language}")
                     .replace("{codec}", info.codec ? info.codec : "{codec}")
                     .replace("{bitRate}", info.bitRate ? info.bitRate : "{bitRate}")
@@ -893,7 +904,7 @@ $Screenshots$
             code = code.replace(/_USERSUBS(.*?)USERSUBS_/, replacement).trim();
         }
 
-        code = code.replaceAll('$Quality$', document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value);
+        code = code.replaceAll('$Quality$', qualityValue);
         code = code.replaceAll('$Reaper$', document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value);
         code = code.replaceAll('$Poster$', document.getElementById('poster').value);
         code = code.replaceAll('$Screenshots$', document.getElementById('screenshots').value);
