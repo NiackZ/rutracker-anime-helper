@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      4.0
+// @version      4.1
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -54,7 +54,7 @@ $Screenshots$
     const LANG = {
         RUS: "Русский",
         ENG: "Английский",
-        CHN: "Китайский",
+        CHI: "Китайский",
         KAZ: "Казахский",
         JAP: "Японский"
     }
@@ -878,7 +878,7 @@ $Screenshots$
                 names.push(animeInfo.names.en);
             }
             const hasRussianAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.RUS.toLowerCase());
-            const hasChineseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.CHN.toLowerCase());
+            const hasChineseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.CHI.toLowerCase());
             const hasEnglishAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.ENG.toLowerCase());
             const hasKazakhAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.KAZ.toLowerCase());
             const hasJapaneseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.JAP.toLowerCase());
@@ -886,7 +886,7 @@ $Screenshots$
 
             let audioDescription = (hasRussianAudio ? "RUS(int), " : "") +
                 (hasEnglishAudio ? "ENG, " : "") +
-                (hasChineseAudio ? "CHN, " : "")+
+                (hasChineseAudio ? "CHI, " : "")+
                 (hasKazakhAudio ? "KAZ, " : "") +
                 (hasJapaneseAudio ? "JAP" : "") +
                 (hasRussianAudio || hasEnglishAudio || hasChineseAudio || hasKazakhAudio || hasJapaneseAudio ? "+" : "") +
