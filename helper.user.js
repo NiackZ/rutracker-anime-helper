@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      3.9
+// @version      4.0
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -855,7 +855,7 @@ $Screenshots$
         }
         let code = template;
         const valueIsEmpty = (value) => {
-            return value !== null && value !== undefined && value !== "";
+            return value === null || value === undefined || value === "";
         }
         const qualityValue = document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value;
         const header = () => {
@@ -903,9 +903,28 @@ $Screenshots$
             return formatNames(" / ");
         };
         const formatNames = (separator) => {
-            return Object.values(animeInfo.names)
-                .filter(value => valueIsEmpty(value))
-                .join(separator);
+            const names = [];
+            if (animeInfo.names?.ru) {
+                names.push(animeInfo.names.ru);
+            }
+            if (animeInfo.names?.en) {
+                names.push(animeInfo.names.en);
+            }
+            const romName = animeInfo.names?.romaji;
+            if (romName) {
+                if (romName.toLowerCase() === animeInfo.names?.en?.toLowerCase()) {
+                    if (animeInfo.names.synonym) {
+                        names.push(animeInfo.names.synonym);
+                    }
+                }
+                else {
+                    names.push(romName);
+                }
+            }
+            if (animeInfo.names?.kanji) {
+                names.push(animeInfo.names.kanji);
+            }
+            return names.join(separator);
         };
 
         const formatLink = (name, link) => `[url=${link}]${name}[/url]`;
