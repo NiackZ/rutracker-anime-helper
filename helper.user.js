@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      4.2
+// @version      4.3
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -29,6 +29,7 @@
 [b]Продолжительность[/b]: $Count$ эп, $Duration$
 [b]Режиссер[/b]: $Director$
 [b]Студия[/b]: $Studio$
+[b]Информационные ссылки[/b]: [url=$WA_Link$][color=darkred][b]World Art[/b][/color][/url] [b]||[/b] [url=$Shikimori_Link$][color=darkred][b]Shikimori[/b][/color][/url] [b]||[/b] [url=$MAL_Link$][color=darkred][b]MyAnimeList[/b][/color][/url] [b]||[/b] [url=$AniDb_Link$][color=darkred][b]AniDB[/b][/color][/url]
 
 [b]Описание[/b]: $Description$
 
@@ -74,6 +75,13 @@ $Screenshots$
         studioNames: '$Studio_names$',
         description: '$Description$',
         episodes: '$Episodes$',
+        LINK: {
+            WA: '$WA_Link$',
+            Shikimori: '$Shikimori_Link$',
+            MAL: '$MAL_Link$',
+            AniDb: '$AniDb_Link$',
+            ANN: '$ANN_Link$',
+        },
         VIDEO: {
             ext: '$Video_ext$',
             height: '$Video_height$',
@@ -494,6 +502,8 @@ $Screenshots$
         <b>${TAG.studio}</b> — названия студий со ссылкой в BB формате; <b>${TAG.studioNames}</b> — названия студий;<br>
         <b>${TAG.description}</b> — описание;<br>
         <b>${TAG.episodes}</b> — список эпизодов;<br>
+        <b>${TAG.LINK.WA}</b> — ссылка на WA; <b>${TAG.LINK.Shikimori}</b> — ссылка на Shikimori; <b>${TAG.LINK.AniDb}</b> — ссылка на AniDb;<br>
+        <b>${TAG.LINK.MAL}</b> — ссылка на MAL; <b>${TAG.LINK.ANN}</b> — ссылка на ANN;<br>
         <br>
         Если поле "Подробные тех. данные" заполнено MediaInfo информацией, то заполняются следующие поля;<br>
         <b>${TAG.VIDEO.ext}</b> — формат видео;  <b>${TAG.VIDEO.height}</b> — высота видео; <b>${TAG.VIDEO.width}</b> — ширина видео; <br>
@@ -948,33 +958,38 @@ $Screenshots$
             return null;
         }
 
-        code = code.replaceAll(TAG.header, header);
-        code = code.replaceAll(TAG.names, names);
-        code = code.replaceAll(TAG.namesString, namesString);
-        code = code.replaceAll(TAG.country, animeInfo.country);
-        code = code.replaceAll(TAG.year, animeInfo.season.year);
-        code = code.replaceAll(TAG.season, animeInfo.season.name);
-        code = code.replaceAll(TAG.genre, animeInfo.genres);
-        code = code.replaceAll(TAG.type, animeInfo.type.type);
-        code = code.replaceAll(TAG.episodeCount, animeInfo.type.episodes);
-        code = code.replaceAll(TAG.episodeDuration, animeInfo.type.duration);
-        code = code.replaceAll(TAG.director, animeInfo.director);
-        code = code.replaceAll(TAG.studio, studio);
-        code = code.replaceAll(TAG.studioNames, studioNames);
-        code = code.replaceAll(TAG.description, animeInfo.description);
-        code = code.replaceAll(TAG.episodes, episodes);
+        code = code.replaceAll(TAG.header, header)
+                    .replaceAll(TAG.names, names)
+                    .replaceAll(TAG.namesString, namesString)
+                    .replaceAll(TAG.country, animeInfo.country)
+                    .replaceAll(TAG.year, animeInfo.season.year)
+                    .replaceAll(TAG.season, animeInfo.season.name)
+                    .replaceAll(TAG.genre, animeInfo.genres)
+                    .replaceAll(TAG.type, animeInfo.type.type)
+                    .replaceAll(TAG.episodeCount, animeInfo.type.episodes)
+                    .replaceAll(TAG.episodeDuration, animeInfo.type.duration)
+                    .replaceAll(TAG.director, animeInfo.director)
+                    .replaceAll(TAG.studio, studio)
+                    .replaceAll(TAG.studioNames, studioNames)
+                    .replaceAll(TAG.description, animeInfo.description)
+                    .replaceAll(TAG.episodes, episodes)
+                    .replaceAll(TAG.LINK.AniDb, animeInfo.links.AniDb ? animeInfo.links.AniDb : TAG.LINK.AniDb)
+                    .replaceAll(TAG.LINK.ANN, animeInfo.links.ANN ? animeInfo.links.ANN : TAG.LINK.ANN)
+                    .replaceAll(TAG.LINK.MAL, animeInfo.links.MAL ? animeInfo.links.MAL : TAG.LINK.MAL)
+                    .replaceAll(TAG.LINK.Shikimori, animeInfo.links.Shikimori ? animeInfo.links.Shikimori : TAG.LINK.Shikimori)
+                    .replaceAll(TAG.LINK.WA, animeInfo.links.WA ? animeInfo.links.WA : TAG.LINK.WA)
 
-        code = code.replaceAll(TAG.VIDEO.ext, miInfo.videoInfo.fileExt);
-        code = code.replaceAll(TAG.VIDEO.codec, miInfo.videoInfo.codec);
-        code = code.replaceAll(TAG.VIDEO.codecProfile, miInfo.videoInfo.codecProfile);
-        code = code.replaceAll(TAG.VIDEO.width, miInfo.videoInfo.width);
-        code = code.replaceAll(TAG.VIDEO.height, miInfo.videoInfo.height);
-        code = code.replaceAll(TAG.VIDEO.aspect, miInfo.videoInfo.aspect);
-        code = code.replaceAll(TAG.VIDEO.chromaSubsampling, miInfo.videoInfo.chromaSubsampling);
-        code = code.replaceAll(TAG.VIDEO.colorPrimaries, miInfo.videoInfo.colorPrimaries);
-        code = code.replaceAll(TAG.VIDEO.bitrate, miInfo.videoInfo.bitRate);
-        code = code.replaceAll(TAG.VIDEO.fps, miInfo.videoInfo.fps);
-        code = code.replaceAll(TAG.VIDEO.bitDepth, miInfo.videoInfo.bitDepth);
+                    .replaceAll(TAG.VIDEO.ext, miInfo.videoInfo.fileExt)
+                    .replaceAll(TAG.VIDEO.codec, miInfo.videoInfo.codec)
+                    .replaceAll(TAG.VIDEO.codecProfile, miInfo.videoInfo.codecProfile)
+                    .replaceAll(TAG.VIDEO.width, miInfo.videoInfo.width)
+                    .replaceAll(TAG.VIDEO.height, miInfo.videoInfo.height)
+                    .replaceAll(TAG.VIDEO.aspect, miInfo.videoInfo.aspect)
+                    .replaceAll(TAG.VIDEO.chromaSubsampling, miInfo.videoInfo.chromaSubsampling)
+                    .replaceAll(TAG.VIDEO.colorPrimaries, miInfo.videoInfo.colorPrimaries)
+                    .replaceAll(TAG.VIDEO.bitrate, miInfo.videoInfo.bitRate)
+                    .replaceAll(TAG.VIDEO.fps, miInfo.videoInfo.fps)
+                    .replaceAll(TAG.VIDEO.bitDepth, miInfo.videoInfo.bitDepth);
 
         const matchAudio = code.match(new RegExp(`${TAG.AUDIO.start}(.*?)${TAG.AUDIO.end}`));
         const matchSubs = code.match(new RegExp(`${TAG.SUB.start}(.*?)${TAG.SUB.end}`));
@@ -1012,13 +1027,11 @@ $Screenshots$
             code = code.replace(new RegExp(`${TAG.SUB.start}(.*?)${TAG.SUB.end}`), replacement).trim();
         }
 
-        code = code.replaceAll(TAG.FORM.quality, qualityValue);
-        code = code.replaceAll(TAG.FORM.reaper, document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value);
-        code = code.replaceAll(TAG.FORM.poster, document.getElementById('poster').value);
-        code = code.replaceAll(TAG.FORM.screenshots, document.getElementById('screenshots').value);
-        code = code.replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value);
-
-        return code;
+        return code.replaceAll(TAG.FORM.quality, qualityValue)
+                    .replaceAll(TAG.FORM.reaper, document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value)
+                    .replaceAll(TAG.FORM.poster, document.getElementById('poster').value)
+                    .replaceAll(TAG.FORM.screenshots, document.getElementById('screenshots').value)
+                    .replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value);
     }
 
     addUrlRow();
