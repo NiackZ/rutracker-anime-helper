@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      4.4
+// @version      4.5
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -29,7 +29,7 @@
 [b]Продолжительность[/b]: $Count$ эп, $Duration$
 [b]Режиссер[/b]: $Director$
 [b]Студия[/b]: $Studio$
-[b]Информационные ссылки[/b]: [url=$WA_Link$][color=darkred][b]World Art[/b][/color][/url] [b]||[/b] [url=$Shikimori_Link$][color=darkred][b]Shikimori[/b][/color][/url] [b]||[/b] [url=$MAL_Link$][color=darkred][b]MyAnimeList[/b][/color][/url] [b]||[/b] [url=$AniDb_Link$][color=darkred][b]AniDB[/b][/color][/url]
+[b]Информационные ссылки[/b]: [url=$WA_Link$][color=darkred][b]World Art[/b][/color][/url] [b], [/b] [url=$Shikimori_Link$][color=darkred][b]Shikimori[/b][/color][/url] [b], [/b] [url=$MAL_Link$][color=darkred][b]MyAnimeList[/b][/color][/url] [b], [/b] [url=$AniDb_Link$][color=darkred][b]AniDB[/b][/color][/url]
 
 [b]Описание[/b]: $Description$
 
