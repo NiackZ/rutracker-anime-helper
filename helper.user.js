@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      3.8
+// @version      3.9
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -617,10 +617,16 @@ $Screenshots$
         episodes.value = "";
         othName.value = "";
         episodeTextArea.value = "";
+        anime.names.ru = anime.names.ru
+            ?.replace('[', '(')
+            ?.replace(']', ')');
         if (anime.names.ru) {
             rusName.value = anime.names.ru;
         }
         let fillRomaji = true;
+        anime.names.en = anime.names.en
+            .replace('[', '')
+            .replace(']', '');
         if (anime.names.en) {
             engName.value = anime.names.en;
         }
@@ -630,8 +636,11 @@ $Screenshots$
                 fillRomaji = false;
             }
         }
-        if (fillRomaji && anime.names.romaji && engName.value !== anime.names.romaji) {
+        if (fillRomaji && anime.names.romaji && engName.value.toLowerCase() !== anime.names.romaji.toLowerCase()) {
             othName.value = anime.names.romaji;
+        }
+        else if (anime.names.synonym) {
+            othName.value = othName.value ? `${othName.value} / ${anime.names.synonym}`.trim() : anime.names.synonym;
         }
 
         if (anime.names.kanji) {
@@ -854,8 +863,16 @@ $Screenshots$
             if (animeInfo.names?.ru) {
                 names.push(animeInfo.names.ru);
             }
-            if (animeInfo.names?.romaji) {
-                names.push(animeInfo.names.romaji);
+            const romName = animeInfo.names?.romaji;
+            if (romName) {
+                if (romName.toLowerCase() === animeInfo.names?.en?.toLowerCase()) {
+                    if (animeInfo.names.synonym) {
+                        names.push(animeInfo.names.synonym);
+                    }
+                }
+                else {
+                    names.push(romName);
+                }
             }
             if (animeInfo.names?.en) {
                 names.push(animeInfo.names.en);
