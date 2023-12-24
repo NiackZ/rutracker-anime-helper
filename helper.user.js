@@ -58,6 +58,63 @@ $Screenshots$
         KAZ: "Казахский",
         JAP: "Японский"
     }
+    const TAG = {
+        header: '$Header$',
+        names: '$Names$',
+        namesString: '$String_names$',
+        country: '$Country$',
+        year: '$Year$',
+        season: '$Season$',
+        genre: '$Genre$',
+        type: '$Type$',
+        episodeCount: '$Count$',
+        episodeDuration: '$Duration$',
+        director: '$Director$',
+        studio: '$Studio$',
+        studioNames: '$Studio_names$',
+        description: '$Description$',
+        episodes: '$Episodes$',
+        VIDEO: {
+            ext: '$Video_ext$',
+            height: '$Video_height$',
+            width: '$Video_width$',
+            codec: '$Video_codec$',
+            codecProfile: '$Video_codec_profile$',
+            aspect: '$Video_aspect$',
+            bitrate: '$Video_bit_rate$',
+            fps: '$Video_fps$',
+            bitDepth: '$Video_bit_depth$',
+            chromaSubsampling: '$Video_chroma_subsampling$',
+            colorPrimaries: '$Video_color_primaries$'
+        },
+        FORM: {
+            quality: '$Quality$',
+            reaper: '$Reaper$',
+            poster: '$Poster$',
+            screenshots: '$Screenshots$',
+            MI: '$MediaInfo$'
+        },
+        AUDIO: {
+            start: '_USERAUDIO',
+            end: 'USERAUDIO_',
+        },
+        SUB: {
+            start: '_USERSUBS',
+            end: 'USERSUBS_'
+        },
+        TEMPLATE: {
+            index: '{index}',
+            language: '{language}',
+            flag: '{flag}',
+            codec: '{codec}',
+            bitRate: '{bitRate}',
+            sampleRate: '{sampleRate}',
+            bitDepth: '{bitDepth}',
+            channels: '{channels}',
+            title: '{title}',
+            format: '{format}'
+        }
+    }
     if (localStorage.getItem(localStorageName) === null) {
         localStorage.setItem(localStorageName, defaultTemplate);
     }
@@ -427,44 +484,44 @@ $Screenshots$
         infoContainer.style.margin = '15px 0';
         infoContainer.style.fontSize = '10pt';
         infoContainer.innerHTML = `
-        <b>$Header$</b> — заголовок релиза с краткой технической информацией;<br>
-        <b>$Names$</b> — названия аниме, каждое название с новой строки <b>$String_names$</b> — названия аниме, выводятся все в одну строку;<br>
-        <b>$Country$</b> — страна; <br>
-        <b>$Year$</b> — год выпуска; <b>$Season$</b> — сезон;<br>
-        <b>$Genre$</b> — жанр; <b>$Type$</b> — тип;<br>
-        <b>$Count$</b> — количество эпизодов; <b>$Duration$</b> — длительность;<br>
-        <b>$Director$</b> — режиссер;<br>
-        <b>$Studio$</b> — названия студий со ссылкой в BB формате; <b>$Studio_names$</b> — названия студий;<br>
-        <b>$Description$</b> — описание;<br>
-        <b>$Episodes$</b> — список эпизодов;<br>
+        <b>${TAG.header}</b> — заголовок релиза с краткой технической информацией;<br>
+        <b>${TAG.names}</b> — названия аниме, каждое название с новой строки <b>${TAG.namesString}</b> — названия аниме, выводятся все в одну строку;<br>
+        <b>${TAG.country}</b> — страна; <br>
+        <b>${TAG.year}</b> — год выпуска; <b>${TAG.season}</b> — сезон;<br>
+        <b>${TAG.genre}</b> — жанр; <b>${TAG.type}</b> — тип;<br>
+        <b>${TAG.episodeCount}</b> — количество эпизодов; <b>${TAG.episodeDuration}</b> — длительность;<br>
+        <b>${TAG.director}</b> — режиссер;<br>
+        <b>${TAG.studio}</b> — названия студий со ссылкой в BB формате; <b>${TAG.studioNames}</b> — названия студий;<br>
+        <b>${TAG.description}</b> — описание;<br>
+        <b>${TAG.episodes}</b> — список эпизодов;<br>
         <br>
         Если поле "Подробные тех. данные" заполнено MediaInfo информацией, то заполняются следующие поля;<br>
-        <b>$Video_ext$</b> — формат видео;  <b>$Video_height$</b> — высота видео; <b>$Video_width$</b> — ширина видео; <br>
-        <b>$Video_codec$</b> — кодек видео; <b>$Video_codec_profile$</b> — профиль кодека; <b>$Video_aspect$</b> — соотношение сторон; <br>
-        <b>$Video_bit_rate$</b> — битрейт видео; <b>$Video_fps$</b> — частота кадров (fps); <b>$Video_bit_depth$</b> — битовая глубина;<br>
-        <b>$Video_chroma_subsampling$</b> — субдискретизация насыщенности; <b>$Video_color_primaries$</b> — основные цвета;<br>
+        <b>${TAG.VIDEO.ext}</b> — формат видео;  <b>${TAG.VIDEO.height}</b> — высота видео; <b>${TAG.VIDEO.width}</b> — ширина видео; <br>
+        <b>${TAG.VIDEO.codec}</b> — кодек видео; <b>${TAG.VIDEO.codecProfile}</b> — профиль кодека; <b>${TAG.VIDEO.aspect}</b> — соотношение сторон; <br>
+        <b>${TAG.VIDEO.bitrate}</b> — битрейт видео; <b>${TAG.VIDEO.fps}</b> — частота кадров (fps); <b>${TAG.VIDEO.bitDepth}</b> — битовая глубина;<br>
+        <b>${TAG.VIDEO.chromaSubsampling}</b> — субдискретизация насыщенности; <b>${TAG.VIDEO.colorPrimaries}</b> — основные цвета;<br>
         <br>
         Поля ниже берутся из формы, если значения заполнены:<br>
-        <b>$Quality$</b> — качество видео; <b>$Reaper$</b> — автор рипа;<br>
-        <b>$Poster$</b> — ссылка на постер; <br>
-        <b>$Screenshots$</b> — скриншоты; <b>$MediaInfo$</b> — тех. данные;<br>
+        <b>${TAG.FORM.quality}</b> — качество видео; <b>${TAG.FORM.reaper}</b> — автор рипа;<br>
+        <b>${TAG.FORM.poster}</b> — ссылка на постер; <br>
+        <b>${TAG.FORM.screenshots}</b> — скриншоты; <b>${TAG.FORM.MI}</b> — тех. данные;<br>
         <br>
-        <b>_USERAUDIO</b> — начало блока аудио; <b>USERAUDIO_</b> — конец блока аудио;<br>
+        <b>${TAG.AUDIO.start}</b> — начало блока аудио; <b>${TAG.AUDIO.end}</b> — конец блока аудио;<br>
         <br>
         Внутри блока можно сформировать свой шаблон дорожки с аудио:<br>
-        <b>{index}</b> — порядоковый номер <b>{language}</b> — язык; <b>{flag}</b> — ссылка на флаг;<br>
-        <b>{codec}</b> — кодек; <b>{bitRate}</b> — битрейт; <br>
-        <b>{sampleRate}</b> — частота; <b>{bitDepth}</b> — битовая глубина;<br>
-        <b>{channels}</b> — количество каналов; <b>{title}</b> — название;<br>
+        <b>${TAG.TEMPLATE.index}</b> — порядоковый номер <b>${TAG.TEMPLATE.language}</b> — язык; <b>${TAG.TEMPLATE.flag}</b> — ссылка на флаг с static.rutracker.cc;<br>
+        <b>${TAG.TEMPLATE.codec}</b> — кодек; <b>${TAG.TEMPLATE.bitRate}</b> — битрейт; <br>
+        <b>${TAG.TEMPLATE.sampleRate}</b> — частота; <b>${TAG.TEMPLATE.bitDepth}</b> — битовая глубина;<br>
+        <b>${TAG.TEMPLATE.channels}</b> — количество каналов; <b>${TAG.TEMPLATE.title}</b> — название;<br>
         <br>
-        <b>_USERSUBS</b> — начало блока субтитров; <b>USERSUBS_</b> — конец блока субтитров;<br>
+        <b>${TAG.SUB.start}</b> — начало блока субтитров; <b>${TAG.SUB.end}</b> — конец блока субтитров;<br>
         <br>
         Внутри блока можно сформировать свой шаблон строки субтитров:<br>
-        <b>{index}</b> — порядоковый номер; <b>{language}</b> — язык; <b>{flag}</b> — ссылка на флаг с static.rutracker.cc;<br>
-        <b>{format}</b> — формат субтитров; <b>{title}</b> — название;<br>
+        <b>${TAG.TEMPLATE.index}</b> — порядоковый номер; <b>${TAG.TEMPLATE.language}</b> — язык; <b>${TAG.TEMPLATE.flag}</b> — ссылка на флаг с static.rutracker.cc;<br>
+        <b>${TAG.TEMPLATE.format}</b> — формат субтитров; <b>${TAG.TEMPLATE.title}</b> — название;<br>
         <br>
-        <i>{language}</i> — поддерживает следующие языки: русский, английский, японский, китайский, казахский;<br>
-        <i>{flag}</i> — поддерживает флаги: русский, английский, японский;<br>
+        <i>${TAG.TEMPLATE.language}</i> — поддерживает следующие языки: русский, английский, японский, китайский, казахский;<br>
+        <i>${TAG.TEMPLATE.flag}</i> — поддерживает флаги: русский, английский, японский;<br>
     `;
 
         modalContent.appendChild(infoContainer);
@@ -855,74 +912,75 @@ $Screenshots$
             return null;
         }
 
-        code = code.replaceAll('$Header$', header);
-        code = code.replaceAll("$Names$", names);
-        code = code.replaceAll('$String_names$', namesString);
-        code = code.replaceAll('$Country$', animeInfo.country);
-        code = code.replaceAll('$Year$', animeInfo.season.year);
-        code = code.replaceAll('$Season$', animeInfo.season.name);
-        code = code.replaceAll('$Genre$', animeInfo.genres);
-        code = code.replaceAll('$Type$', animeInfo.type.type);
-        code = code.replaceAll('$Count$', animeInfo.type.episodes);
-        code = code.replaceAll('$Duration$', animeInfo.type.duration);
-        code = code.replaceAll('$Director$', animeInfo.director);
-        code = code.replaceAll('$Studio$', studio);
-        code = code.replaceAll('$Studio_names$', studioNames);
-        code = code.replaceAll('$Description$', animeInfo.description);
-        code = code.replaceAll('$Episodes$', episodes);
+        code = code.replaceAll(TAG.header, header);
+        code = code.replaceAll(TAG.names, names);
+        code = code.replaceAll(TAG.namesString, namesString);
+        code = code.replaceAll(TAG.country, animeInfo.country);
+        code = code.replaceAll(TAG.year, animeInfo.season.year);
+        code = code.replaceAll(TAG.season, animeInfo.season.name);
+        code = code.replaceAll(TAG.genre, animeInfo.genres);
+        code = code.replaceAll(TAG.type, animeInfo.type.type);
+        code = code.replaceAll(TAG.episodeCount, animeInfo.type.episodes);
+        code = code.replaceAll(TAG.episodeDuration, animeInfo.type.duration);
+        code = code.replaceAll(TAG.director, animeInfo.director);
+        code = code.replaceAll(TAG.studio, studio);
+        code = code.replaceAll(TAG.studioNames, studioNames);
+        code = code.replaceAll(TAG.description, animeInfo.description);
+        code = code.replaceAll(TAG.episodes, episodes);
 
-        code = code.replaceAll('$Video_ext$', miInfo.videoInfo.fileExt);
-        code = code.replaceAll('$Video_codec$', miInfo.videoInfo.codec);
-        code = code.replaceAll('$Video_codec_profile$', miInfo.videoInfo.codecProfile);
-        code = code.replaceAll('$Video_width$', miInfo.videoInfo.width);
-        code = code.replaceAll('$Video_height$', miInfo.videoInfo.height);
-        code = code.replaceAll('$Video_aspect$', miInfo.videoInfo.aspect);
-        code = code.replaceAll('$Video_chroma_subsampling$', miInfo.videoInfo.chromaSubsampling);
-        code = code.replaceAll('$Video_color_primaries$', miInfo.videoInfo.colorPrimaries);
-        code = code.replaceAll('$Video_bit_rate$', miInfo.videoInfo.bitRate);
-        code = code.replaceAll('$Video_fps$', miInfo.videoInfo.fps);
-        code = code.replaceAll('$Video_bit_depth$', miInfo.videoInfo.bitDepth);
+        code = code.replaceAll(TAG.VIDEO.ext, miInfo.videoInfo.fileExt);
+        code = code.replaceAll(TAG.VIDEO.codec, miInfo.videoInfo.codec);
+        code = code.replaceAll(TAG.VIDEO.codecProfile, miInfo.videoInfo.codecProfile);
+        code = code.replaceAll(TAG.VIDEO.width, miInfo.videoInfo.width);
+        code = code.replaceAll(TAG.VIDEO.height, miInfo.videoInfo.height);
+        code = code.replaceAll(TAG.VIDEO.aspect, miInfo.videoInfo.aspect);
+        code = code.replaceAll(TAG.VIDEO.chromaSubsampling, miInfo.videoInfo.chromaSubsampling);
+        code = code.replaceAll(TAG.VIDEO.colorPrimaries, miInfo.videoInfo.colorPrimaries);
+        code = code.replaceAll(TAG.VIDEO.bitrate, miInfo.videoInfo.bitRate);
+        code = code.replaceAll(TAG.VIDEO.fps, miInfo.videoInfo.fps);
+        code = code.replaceAll(TAG.VIDEO.bitDepth, miInfo.videoInfo.bitDepth);
 
-        const matchAudio = code.match(/_USERAUDIO(.*?)USERAUDIO_/);
-        const matchSubs = code.match(/_USERSUBS(.*?)USERSUBS_/);
+        const matchAudio = code.match(new RegExp(`${TAG.AUDIO.start}(.*?)${TAG.AUDIO.end}`));
+        const matchSubs = code.match(new RegExp(`${TAG.SUB.start}(.*?)${TAG.SUB.end}`));
+
         if (matchAudio) {
             const audioTemplate = matchAudio[1];
             const replacement = miInfo.audioInfo.map((info, index) => {
                 const flag = getFlagByLang(info.language);
                 return audioTemplate.trim()
-                    .replace("{index}", index + 1)
-                    .replace("{flag}", flag ? flag : "{flag}")
-                    .replace("{language}", info.language ? info.language : "{language}")
-                    .replace("{codec}", info.codec ? info.codec : "{codec}")
-                    .replace("{bitRate}", info.bitRate ? info.bitRate : "{bitRate}")
-                    .replace("{sampleRate}", info.sampleRate ? info.sampleRate : "{sampleRate}")
-                    .replace("{bitDepth}", info.bitDepth ? info.bitDepth : "{bitDepth}")
-                    .replace("{channels}", info.channels ? info.channels : "{channels}")
-                    .replace("{title}", info.title ? info.title : "{title}")
+                    .replace(TAG.TEMPLATE.index, index + 1)
+                    .replace(TAG.TEMPLATE.flag, flag ? flag : TAG.TEMPLATE.flag)
+                    .replace(TAG.TEMPLATE.language, info.language ? info.language : TAG.TEMPLATE.language)
+                    .replace(TAG.TEMPLATE.codec, info.codec ? info.codec : TAG.TEMPLATE.codec)
+                    .replace(TAG.TEMPLATE.bitRate, info.bitRate ? info.bitRate : TAG.TEMPLATE.bitRate)
+                    .replace(TAG.TEMPLATE.sampleRate, info.sampleRate ? info.sampleRate : TAG.TEMPLATE.sampleRate)
+                    .replace(TAG.TEMPLATE.bitDepth, info.bitDepth ? info.bitDepth : TAG.TEMPLATE.bitDepth)
+                    .replace(TAG.TEMPLATE.channels, info.channels ? info.channels : TAG.TEMPLATE.channels)
+                    .replace(TAG.TEMPLATE.title, info.title ? info.title : TAG.TEMPLATE.title)
             }).join('\n');
 
-            code = code.replace(/_USERAUDIO(.*?)USERAUDIO_/, replacement).trim();
+            code = code.replace(new RegExp(`${TAG.AUDIO.start}(.*?)${TAG.AUDIO.end}`), replacement).trim();
         }
         if (matchSubs) {
             const subsTemplate = matchSubs[1];
             const replacement = miInfo.textInfo.map((info, index) => {
                 const flag = getFlagByLang(info.language);
                 return subsTemplate.trim()
-                    .replace("{index}", index + 1)
-                    .replace("{flag}", flag ? flag : "{flag}")
-                    .replace("{language}", info.language ? info.language : "{language}")
-                    .replace("{format}", info.format ? info.format : "{format}")
-                    .replace("{title}", info.title ? info.title : "{title}")
+                    .replace(TAG.TEMPLATE.index, index + 1)
+                    .replace(TAG.TEMPLATE.flag, flag ? flag : TAG.TEMPLATE.flag)
+                    .replace(TAG.TEMPLATE.language, info.language ? info.language : TAG.TEMPLATE.language)
+                    .replace(TAG.TEMPLATE.format, info.format ? info.format : TAG.TEMPLATE.format)
+                    .replace(TAG.TEMPLATE.title, info.title ? info.title : TAG.TEMPLATE.title)
             }).join('\n');
 
-            code = code.replace(/_USERSUBS(.*?)USERSUBS_/, replacement).trim();
+            code = code.replace(new RegExp(`${TAG.SUB.start}(.*?)${TAG.SUB.end}`), replacement).trim();
         }
 
-        code = code.replaceAll('$Quality$', qualityValue);
-        code = code.replaceAll('$Reaper$', document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value);
-        code = code.replaceAll('$Poster$', document.getElementById('poster').value);
-        code = code.replaceAll('$Screenshots$', document.getElementById('screenshots').value);
-        code = code.replaceAll('$MediaInfo$', document.getElementById('60503004a43535a7eb84520612a2e26c').value);
+        code = code.replaceAll(TAG.FORM.quality, qualityValue);
+        code = code.replaceAll(TAG.FORM.reaper, document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value);
+        code = code.replaceAll(TAG.FORM.poster, document.getElementById('poster').value);
+        code = code.replaceAll(TAG.FORM.screenshots, document.getElementById('screenshots').value);
+        code = code.replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value);
 
         return code;
     }
