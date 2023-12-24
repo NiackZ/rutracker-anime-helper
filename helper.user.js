@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      4.1
+// @version      4.2
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -215,11 +215,11 @@ $Screenshots$
                         width: _width ? _width.replaceAll(" ", "") : null,
                         height: _height ? _height.replaceAll(" ", "") : null,
                         aspect: parseField(videoBlock, regex.ASPECT),
-                        fps: _fps ? _fps.split(" ")[0] : null,
+                        fps: _fps ? _fps?.replaceAll(',', '.')?.split(" ")[0] : null,
                         chromaSubsampling: parseField(videoBlock, regex.CHROMA_SUBSAMPLING),
                         colorPrimaries: parseField(videoBlock, regex.COLOR_PRIMARIES),
                         bitDepth: parseField(videoBlock, regex.BIT_DEPTH),
-                        bitRate: parseField(videoBlock, regex.BIT_RATE),
+                        bitRate: parseField(videoBlock, regex.BIT_RATE)?.replaceAll(',', '.'),
                         fileExt: null
                     };
                 }
