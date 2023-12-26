@@ -2,12 +2,17 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      4.5
+// @version      4.6
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
 // @updateURL    https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
+// @match        https://rutracker.org/forum/posting.php?f=599&mode=new_rel
 // @match        https://rutracker.org/forum/posting.php?f=1105&mode=new_rel
+// @match        https://rutracker.org/forum/posting.php?f=1106&mode=new_rel
+// @match        https://rutracker.org/forum/posting.php?f=1389&mode=new_rel
+// @match        https://rutracker.org/forum/posting.php?f=1391&mode=new_rel
+// @match        https://rutracker.org/forum/posting.php?f=2491&mode=new_rel
 // @grant        none
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=rutracker.org
 // ==/UserScript==
@@ -311,6 +316,11 @@ $Screenshots$
 
         return { videoInfo, audioInfo, textInfo };
     }
+
+    const getAudioExtInfo = () => {
+
+    }
+
     const addUrlRow = () => {
         const tbody = document.getElementById('rel-tpl');
         const newRow = tbody.insertRow(0);
