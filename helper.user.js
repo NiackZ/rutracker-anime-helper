@@ -105,7 +105,8 @@ $Screenshots$
             reaper: '$Reaper$',
             poster: '$Poster$',
             screenshots: '$Screenshots$',
-            MI: '$MediaInfo$'
+            MI: '$MediaInfo$',
+            differences: '$Differences$'
         },
         AUDIO: {
             start: '_USERAUDIO',
@@ -522,8 +523,8 @@ $Screenshots$
         <br>
         Поля ниже берутся из формы, если значения заполнены:<br>
         <b>${TAG.FORM.quality}</b> — качество видео; <b>${TAG.FORM.reaper}</b> — автор рипа;<br>
-        <b>${TAG.FORM.poster}</b> — ссылка на постер; <br>
-        <b>${TAG.FORM.screenshots}</b> — скриншоты; <b>${TAG.FORM.MI}</b> — тех. данные;<br>
+        <b>${TAG.FORM.poster}</b> — ссылка на постер; <b>${TAG.FORM.MI}</b> — тех. данные;<br>
+        <b>${TAG.FORM.screenshots}</b> — скриншоты; <b>${TAG.FORM.differences}</b> — отличия;<br>
         <br>
         <b>${TAG.AUDIO.start}</b> — начало блока аудио; <b>${TAG.AUDIO.end}</b> — конец блока аудио;<br>
         <br>
@@ -1040,7 +1041,8 @@ $Screenshots$
                     .replaceAll(TAG.FORM.reaper, document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value)
                     .replaceAll(TAG.FORM.poster, document.getElementById('poster').value)
                     .replaceAll(TAG.FORM.screenshots, document.getElementById('screenshots').value)
-                    .replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value);
+                    .replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value)
+                    .replaceAll(TAG.FORM.differences, document.getElementById('1a3a0e59f6289fc73e6834c3709c1ffa').value);
     }
 
     addUrlRow();
