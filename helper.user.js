@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.0
+// @version      5.1
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -128,6 +128,10 @@ $Screenshots$
             title: '{title}',
             format: '{format}'
         }
+    }
+    const episodeType = {
+        TV: 'TV',
+        SP: 'Special'
     }
     if (localStorage.getItem(localStorageName) === null) {
         localStorage.setItem(localStorageName, defaultTemplate);
@@ -619,10 +623,6 @@ $Screenshots$
     }
     const fillFields = (anime) => {
         console.log(anime);
-        const episodeType = {
-            TV: 'TV',
-            SP: 'Special'
-        }
         const rusName = document.getElementById("title_rus");
         const engName = document.getElementById("title_eng");
         const othName = document.getElementById("19196242af37f0ad77a7f593b45f8207");
@@ -939,7 +939,11 @@ $Screenshots$
             if (!audioDescription) {
                 audioDescription="JAP"
             }
-            return `${names.join(" / ")} [${animeInfo.type.shortType}] [${animeInfo.type.episodes} из ${animeInfo.type.episodes}] [${audioDescription}] [${animeInfo.season.year}, ${animeInfo.genres}, ${qualityValue}] [${miInfo.videoInfo.height}p]`;
+            const spCount = animeInfo.episodes?.filter(ep => ep.type === episodeType.SP).length || 0;
+            const headerType = spCount > 0 ? `${animeInfo.type.shortType}+${episodeType.SP}` : animeInfo.type.shortType;
+            const episodes = spCount > 0 ? `${animeInfo.type.episodes}+${spCount}` : animeInfo.type.episodes;
+
+            return `${names.join(" / ")} [${headerType}] [${episodes} из ${episodes}] [${audioDescription}] [${animeInfo.season.year}, ${animeInfo.genres}, ${qualityValue}] [${miInfo.videoInfo.height}p]`;
         }
         const names = () => {
             return formatNames("\n");
@@ -994,37 +998,37 @@ $Screenshots$
         }
 
         code = code.replaceAll(TAG.header, header)
-                    .replaceAll(TAG.names, names)
-                    .replaceAll(TAG.namesString, namesString)
-                    .replaceAll(TAG.country, animeInfo.country)
-                    .replaceAll(TAG.year, animeInfo.season.year)
-                    .replaceAll(TAG.season, animeInfo.season.name)
-                    .replaceAll(TAG.genre, animeInfo.genres)
-                    .replaceAll(TAG.type, animeInfo.type.type)
-                    .replaceAll(TAG.episodeCount, animeInfo.type.episodes)
-                    .replaceAll(TAG.episodeDuration, animeInfo.type.duration)
-                    .replaceAll(TAG.director, animeInfo.director)
-                    .replaceAll(TAG.studio, studio)
-                    .replaceAll(TAG.studioNames, studioNames)
-                    .replaceAll(TAG.description, animeInfo.description)
-                    .replaceAll(TAG.episodes, episodes)
-                    .replaceAll(TAG.LINK.AniDb, animeInfo.links.AniDb ? animeInfo.links.AniDb : TAG.LINK.AniDb)
-                    .replaceAll(TAG.LINK.ANN, animeInfo.links.ANN ? animeInfo.links.ANN : TAG.LINK.ANN)
-                    .replaceAll(TAG.LINK.MAL, animeInfo.links.MAL ? animeInfo.links.MAL : TAG.LINK.MAL)
-                    .replaceAll(TAG.LINK.Shikimori, animeInfo.links.Shikimori ? animeInfo.links.Shikimori : TAG.LINK.Shikimori)
-                    .replaceAll(TAG.LINK.WA, animeInfo.links.WA ? animeInfo.links.WA : TAG.LINK.WA)
+            .replaceAll(TAG.names, names)
+            .replaceAll(TAG.namesString, namesString)
+            .replaceAll(TAG.country, animeInfo.country)
+            .replaceAll(TAG.year, animeInfo.season.year)
+            .replaceAll(TAG.season, animeInfo.season.name)
+            .replaceAll(TAG.genre, animeInfo.genres)
+            .replaceAll(TAG.type, animeInfo.type.type)
+            .replaceAll(TAG.episodeCount, animeInfo.type.episodes)
+            .replaceAll(TAG.episodeDuration, animeInfo.type.duration)
+            .replaceAll(TAG.director, animeInfo.director)
+            .replaceAll(TAG.studio, studio)
+            .replaceAll(TAG.studioNames, studioNames)
+            .replaceAll(TAG.description, animeInfo.description)
+            .replaceAll(TAG.episodes, episodes)
+            .replaceAll(TAG.LINK.AniDb, animeInfo.links.AniDb ? animeInfo.links.AniDb : TAG.LINK.AniDb)
+            .replaceAll(TAG.LINK.ANN, animeInfo.links.ANN ? animeInfo.links.ANN : TAG.LINK.ANN)
+            .replaceAll(TAG.LINK.MAL, animeInfo.links.MAL ? animeInfo.links.MAL : TAG.LINK.MAL)
+            .replaceAll(TAG.LINK.Shikimori, animeInfo.links.Shikimori ? animeInfo.links.Shikimori : TAG.LINK.Shikimori)
+            .replaceAll(TAG.LINK.WA, animeInfo.links.WA ? animeInfo.links.WA : TAG.LINK.WA)
 
-                    .replaceAll(TAG.VIDEO.ext, miInfo.videoInfo.fileExt)
-                    .replaceAll(TAG.VIDEO.codec, miInfo.videoInfo.codec)
-                    .replaceAll(TAG.VIDEO.codecProfile, miInfo.videoInfo.codecProfile)
-                    .replaceAll(TAG.VIDEO.width, miInfo.videoInfo.width)
-                    .replaceAll(TAG.VIDEO.height, miInfo.videoInfo.height)
-                    .replaceAll(TAG.VIDEO.aspect, miInfo.videoInfo.aspect)
-                    .replaceAll(TAG.VIDEO.chromaSubsampling, miInfo.videoInfo.chromaSubsampling)
-                    .replaceAll(TAG.VIDEO.colorPrimaries, miInfo.videoInfo.colorPrimaries)
-                    .replaceAll(TAG.VIDEO.bitrate, miInfo.videoInfo.bitRate)
-                    .replaceAll(TAG.VIDEO.fps, miInfo.videoInfo.fps)
-                    .replaceAll(TAG.VIDEO.bitDepth, miInfo.videoInfo.bitDepth);
+            .replaceAll(TAG.VIDEO.ext, miInfo.videoInfo.fileExt)
+            .replaceAll(TAG.VIDEO.codec, miInfo.videoInfo.codec)
+            .replaceAll(TAG.VIDEO.codecProfile, miInfo.videoInfo.codecProfile)
+            .replaceAll(TAG.VIDEO.width, miInfo.videoInfo.width)
+            .replaceAll(TAG.VIDEO.height, miInfo.videoInfo.height)
+            .replaceAll(TAG.VIDEO.aspect, miInfo.videoInfo.aspect)
+            .replaceAll(TAG.VIDEO.chromaSubsampling, miInfo.videoInfo.chromaSubsampling)
+            .replaceAll(TAG.VIDEO.colorPrimaries, miInfo.videoInfo.colorPrimaries)
+            .replaceAll(TAG.VIDEO.bitrate, miInfo.videoInfo.bitRate)
+            .replaceAll(TAG.VIDEO.fps, miInfo.videoInfo.fps)
+            .replaceAll(TAG.VIDEO.bitDepth, miInfo.videoInfo.bitDepth);
 
         const matchAudio = code.match(new RegExp(`${TAG.AUDIO.start}(.*?)${TAG.AUDIO.end}`));
         const matchSubs = code.match(new RegExp(`${TAG.SUB.start}(.*?)${TAG.SUB.end}`));
@@ -1063,11 +1067,11 @@ $Screenshots$
         }
 
         return code.replaceAll(TAG.FORM.quality, qualityValue)
-                    .replaceAll(TAG.FORM.reaper, document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value)
-                    .replaceAll(TAG.FORM.poster, document.getElementById('poster').value)
-                    .replaceAll(TAG.FORM.screenshots, document.getElementById('screenshots').value)
-                    .replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value)
-                    .replaceAll(TAG.FORM.differences, document.getElementById('1a3a0e59f6289fc73e6834c3709c1ffa').value);
+            .replaceAll(TAG.FORM.reaper, document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value)
+            .replaceAll(TAG.FORM.poster, document.getElementById('poster').value)
+            .replaceAll(TAG.FORM.screenshots, document.getElementById('screenshots').value)
+            .replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value)
+            .replaceAll(TAG.FORM.differences, document.getElementById('1a3a0e59f6289fc73e6834c3709c1ffa').value);
     }
 
     addUrlRow();
