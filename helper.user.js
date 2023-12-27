@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.1
+// @version      5.2
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -983,7 +983,7 @@ $Screenshots$
         const studio = () => animeInfo.studios.map(studio => formatLink(studio.name, studio.link)).join(', ');
 
         const episodes = () => {
-            return animeInfo.episodes.map((ep, index) => `${index + 1}. ${ep}`).join('\n');
+            return document.getElementById("bd78750529cad34e379eca8e6a255d42").value;
         }
         const getFlagByLang = (lang) => {
             switch (lang) {
