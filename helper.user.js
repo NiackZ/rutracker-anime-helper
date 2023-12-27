@@ -193,7 +193,7 @@ $Screenshots$
             NAME: /Полное имя\s+:\s+([^\r\n]+)/
         };
 
-        const parseField = (block, regex, fieldName) => {
+        const parseField = (block, regex) => {
             const match = block.match(regex);
             return match ? match[1].trim() : null;
         };
