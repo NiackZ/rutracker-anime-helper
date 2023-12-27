@@ -725,7 +725,7 @@ $Screenshots$
         }
 
     }
-    const getTechData = (miData) => {
+    const getTechData = () => {
         const textareaElement = document.getElementById("60503004a43535a7eb84520612a2e26c");
         return textareaElement.value ? MiParser(textareaElement.value) : null;
     }
