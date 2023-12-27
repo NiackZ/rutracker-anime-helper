@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      4.9
+// @version      5.0
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -619,6 +619,10 @@ $Screenshots$
     }
     const fillFields = (anime) => {
         console.log(anime);
+        const episodeType = {
+            TV: 'TV',
+            SP: 'Special'
+        }
         const rusName = document.getElementById("title_rus");
         const engName = document.getElementById("title_eng");
         const othName = document.getElementById("19196242af37f0ad77a7f593b45f8207");
@@ -710,8 +714,13 @@ $Screenshots$
         }
 
         if (!!anime.episodes) {
-            anime.episodes.forEach((name, index) => {
-                episodeTextArea.value = `${episodeTextArea.value}${index + 1}. ${name}\n`;
+            anime.episodes.forEach((episode, index) => {
+                if (episode.type === episodeType.TV) {
+                    episodeTextArea.value = `${episodeTextArea.value}${index + 1}. ${episode.name}\n`;
+                }
+                else {
+                    episodeTextArea.value = `${episodeTextArea.value}${index + 1}. ${episode.name} (${episode.type})\n`;
+                }
             });
         }
 
