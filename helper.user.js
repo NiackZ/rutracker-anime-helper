@@ -783,6 +783,22 @@ $Screenshots$
                                 title: document.getElementById("112f186c9190a9cf4d95c151d3a3fe42")
                             }
                         ]
+
+                        videoFormat.value = '';
+                        HDFormat.value = '';
+                        video.value = '';
+                        audioFields.forEach(audioField => {
+                            audioField.audio.value = "";
+                            audioField.lang.value = "";
+                            audioField.title.value = "";
+                        });
+
+                        textField.forEach(textField => {
+                            textField.text.value = "";
+                            textField.lang.value = "";
+                            textField.title.value = "";
+                        });
+
                         if (techData.videoInfo) {
                             if (techData.videoInfo?.fileExt) {
                                 setOptionIfExists(videoFormat, techData.videoInfo.fileExt);
