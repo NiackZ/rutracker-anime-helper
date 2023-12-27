@@ -714,14 +714,14 @@ $Screenshots$
         }
 
         if (!!anime.episodes) {
-            anime.episodes.forEach((episode, index) => {
+            const episodesArray = anime.episodes.map((episode, index) => {
                 if (episode.type === episodeType.TV) {
-                    episodeTextArea.value = `${episodeTextArea.value}${index + 1}. ${episode.name}\n`;
-                }
-                else {
-                    episodeTextArea.value = `${episodeTextArea.value}${index + 1}. ${episode.name} (${episode.type})\n`;
+                    return `${index + 1}. ${episode.name}`;
+                } else {
+                    return `${index + 1}. ${episode.name} (${episode.type})`;
                 }
             });
+            episodeTextArea.value = episodesArray.join('\n');
         }
 
     }
