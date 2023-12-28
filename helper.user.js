@@ -488,7 +488,7 @@ $Screenshots$
         modalContent.id = "templateModal";
         modalContent.style.boxShadow = '0 0 10px 1px black'
         modalContent.style.background = '#fff';
-        modalContent.style.width = '1000px';
+        modalContent.style.width = '1200px';
         modalContent.style.minHeight = '400px';
         modalContent.style.height = '80%';
         modalContent.style.overflow = 'auto';
