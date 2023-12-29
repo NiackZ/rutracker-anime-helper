@@ -149,6 +149,9 @@ $Screenshots$
     const getTableTitles = () => {
         return document.querySelectorAll('.rel-title');
     }
+    const valueIsEmpty = (value) => {
+        return value === null || value === undefined || value === "";
+    }
     const findLastTitleRow = (title) => {
         let maxNumber = -1;
         let element = null;
@@ -371,6 +374,8 @@ $Screenshots$
             VIDEO_RU: /Видео([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/,
             AUDIO: /Audio #([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
             AUDIO_RU: /Аудио #([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
+            AUDIO_EXT: /Audio([\s\S]+?)(?=Audio|$)/g,
+            AUDIO_RU_EXT: /Аудио([\s\S]*?)(?=Аудио|$)/g,
             TEXT: /Text #([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
             TEXT_RU: /Текст #([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
             GENERAL: /General([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/,
@@ -395,15 +400,25 @@ $Screenshots$
         const lang = useEN ? EN : RU;
 
         const videoInfo = getVideoInfo(useEN ? videoBlockMatch : videoBlockMatch_RU, lang);
-        const audioInfo = getAudioInfo(useEN ? audioBlockMatches : audioBlockMatches_RU, lang);
+        const audioInfo = {
+            int: null, ext: null
+        }
+        const textAreaExt = document.getElementById('ext_audio_area')?.value;
+        if (!valueIsEmpty(textAreaExt)) {
+            const audioExtBlockMatches = [...textAreaExt.matchAll(getRegexBlocks.AUDIO_EXT)];
+            const audioExtBlockMatches_RU = [...textAreaExt.matchAll(getRegexBlocks.AUDIO_RU_EXT)];
+            audioInfo.ext = audioExtBlockMatches_RU.length === 0
+                ? getAudioInfo(audioExtBlockMatches, EN)
+                : getAudioInfo(audioExtBlockMatches_RU, RU);
+        }
+
+        audioInfo.int = getAudioInfo(useEN ? audioBlockMatches : audioBlockMatches_RU, lang);
         const textInfo = getTextInfo(useEN ? textBlockMatches : textBlockMatches_RU, lang);
-        videoInfo.fileExt = getFileExt(useEN ? generalBlockMatch : generalBlockMatch_RU, lang);
+        if (videoInfo !== null) {
+            videoInfo.fileExt = getFileExt(useEN ? generalBlockMatch : generalBlockMatch_RU, lang);
+        }
 
         return { videoInfo, audioInfo, textInfo };
-    }
-
-    const getAudioExtInfo = () => {
-
     }
 
     const addUrlRow = () => {
@@ -905,9 +920,10 @@ $Screenshots$
                             }
                             video.value = videoInfo.join(', ');
                         }
-                        if (techData.audioInfo) {
-                            for (let i = 0; i < techData.audioInfo.length; i++) {
-                                const audio = techData.audioInfo[i];
+                        if (techData.audioInfo?.int) {
+                            const audioList = techData.audioInfo.int;
+                            for (let i = 0; i < audioList.length; i++) {
+                                const audio = audioList[i];
                                 const audioBlock = audioFields[i];
                                 if (!audioBlock) break;
                                 const audioInfo = [];
@@ -980,9 +996,6 @@ $Screenshots$
             return;
         }
         let code = template;
-        const valueIsEmpty = (value) => {
-            return value === null || value === undefined || value === "";
-        }
         const qualityValue = document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value;
         const header = () => {
             const names = [];
