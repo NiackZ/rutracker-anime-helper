@@ -58,6 +58,7 @@ $Episodes$
 $Screenshots$
 [/spoiler]`;
     const localStorageName = 'animeTemplate';
+    const newRowSubstringId = 'new_audio_row_';
     const LANG = {
         RUS: "Русский",
         ENG: "Английский",
@@ -166,12 +167,16 @@ $Screenshots$
         });
         return element;
     }
-    const lastAudioRow = findLastTitleRow('Аудио');
+    let lastAudioRow = findLastTitleRow('Аудио');
     const lastSubRow = findLastTitleRow('Субтитры');
     function createVoiceElements(rowId) {
+        const json = {
+            voiceSelectId: `audio_voice_${rowId}`,
+            voiceTypeSelectId: `voice_type_${rowId}`
+        }
         const voice = document.createElement('select');
         voice.className = 'rel-el rel-input rel-single-sel';
-        voice.id = `audio_voice_${rowId}`;
+        voice.id = json.voiceSelectId;
 
         const emptyOption = document.createElement('option');
         emptyOption.value = '';
@@ -189,7 +194,7 @@ $Screenshots$
 
         const type = document.createElement('select');
         type.className = 'rel-el rel-input rel-single-sel';
-        type.id = `voice_type_${rowId}`;
+        type.id = json.voiceTypeSelectId;
 
         const emptyVoiceType = document.createElement('option');
         emptyVoiceType.value = '';
@@ -205,7 +210,7 @@ $Screenshots$
             }
         }
 
-        return { voice, type };
+        return { voice, type, json };
     }
     const addVoiceFields = () => {
         getTableTitles().forEach(function(titleElement) {
@@ -420,7 +425,6 @@ $Screenshots$
 
         return { videoInfo, audioInfo, textInfo };
     }
-
     const addUrlRow = () => {
         const tbody = document.getElementById('rel-tpl');
         const newRow = tbody.insertRow(0);
@@ -920,12 +924,10 @@ $Screenshots$
                             video.value = videoInfo.join(', ');
                         }
 
-                        if (techData.audioInfo.int) {
-                            const audioList = techData.audioInfo.int;
+                        const processAudioInfo = (audioList, audioFields, langPrefix) => {
                             for (let i = 0; i < audioList.length; i++) {
                                 const audio = audioList[i];
-                                const audioBlock = audioFields[i];
-                                if (!audioBlock) break;
+                                const audioBlock = audioFields[i] ? audioFields[i] : createAudioRow();
                                 const audioInfo = [];
                                 if (audio?.language) {
                                     audioInfo.push(audio.language);
@@ -944,7 +946,7 @@ $Screenshots$
                                 }
                                 audioBlock.audio.value = audioInfo.join(', ');
                                 setOptionIfExists(audioBlock.lang, audio.language === LANG.RUS
-                                    ? `${LANG.RUS} (в составе контейнера)`
+                                    ? `${LANG.RUS} (${langPrefix})`
                                     : audio.language
                                 );
                                 if (audio?.title) {
@@ -952,6 +954,17 @@ $Screenshots$
                                 }
                             }
                         }
+
+                        //сброс значений
+                        const elementsToDelete = document.querySelectorAll(`[id^="${newRowSubstringId}"]`);
+                        elementsToDelete.forEach(element => element.remove());
+                        additionalVoiceRowCount = 3;
+
+                        if (techData.audioInfo.int) {
+                            const audioList = techData.audioInfo.int;
+                            processAudioInfo(audioList, audioFields, 'в составе контейнера');
+                        }
+
                         if (techData.audioInfo.ext) {
                             console.log('ext');
                             const audioExtList = techData.audioInfo.ext;
@@ -959,81 +972,12 @@ $Screenshots$
                             if (audioIntList !== null && audioIntList.length > 0) {
                                 const intCount = audioIntList.length;
                                 if (intCount > 3) {
-                                    //новые поля нужны
-                                    console.log('Новые поля');
+                                    processAudioInfo(audioExtList, [], 'внешним файлом');
+                                } else {
+                                    processAudioInfo(audioExtList, audioFields.slice(intCount), 'внешним файлом');
                                 }
-                                else {
-                                    let audioFieldNum = intCount;
-                                    //часть полей дозаполнить
-                                    for (let i = 0; i < audioExtList.length; i++) {
-                                        const audio = audioExtList[i];
-                                        const audioBlock = audioFields[audioFieldNum];
-                                        if (!audioBlock) {
-                                            console.log('[2] Кончились поля Аудио');
-                                            break
-                                        }
-                                        const audioInfo = [];
-                                        if (audio?.language) {
-                                            audioInfo.push(audio.language);
-                                        }
-                                        if (audio?.codec) {
-                                            audioInfo.push(audio.codec);
-                                        }
-                                        if (audio?.bitRate) {
-                                            audioInfo.push(audio.bitRate);
-                                        }
-                                        if (audio?.sampleRate) {
-                                            audioInfo.push(audio.sampleRate);
-                                        }
-                                        if (audio?.channels) {
-                                            audioInfo.push(`${audio.channels} канала`);
-                                        }
-                                        audioBlock.audio.value = audioInfo.join(', ');
-                                        setOptionIfExists(audioBlock.lang, audio.language === LANG.RUS
-                                            ? `${LANG.RUS} (внешним файлом)`
-                                            : audio.language
-                                        );
-                                        if (audio?.title) {
-                                            audioBlock.title.value = audio.title;
-                                        }
-                                        audioFieldNum++;
-                                    }
-                                }
-                            }
-                            else if (audioExtList.length > 0) {
-                                // все поля Аудио свободны
-                                for (let i = 0; i < audioExtList.length; i++) {
-                                    const audio = audioList[i];
-                                    const audioBlock = audioFields[i];
-                                    if (!audioBlock) {
-                                        console.log('[3] Кончились поля Аудио');
-                                        break
-                                    }
-                                    const audioInfo = [];
-                                    if (audio?.language) {
-                                        audioInfo.push(audio.language);
-                                    }
-                                    if (audio?.codec) {
-                                        audioInfo.push(audio.codec);
-                                    }
-                                    if (audio?.bitRate) {
-                                        audioInfo.push(audio.bitRate);
-                                    }
-                                    if (audio?.sampleRate) {
-                                        audioInfo.push(audio.sampleRate);
-                                    }
-                                    if (audio?.channels) {
-                                        audioInfo.push(`${audio.channels} канала`);
-                                    }
-                                    audioBlock.audio.value = audioInfo.join(', ');
-                                    setOptionIfExists(audioBlock.lang, audio.language === LANG.RUS
-                                        ? `${LANG.RUS} (внешним файлом)`
-                                        : audio.language
-                                    );
-                                    if (audio?.title) {
-                                        audioBlock.title.value = audio.title;
-                                    }
-                                }
+                            } else if (audioExtList.length > 0) {
+                                processAudioInfo(audioExtList, audioFields, 'внешним файлом');
                             }
                         }
 
@@ -1253,11 +1197,15 @@ $Screenshots$
             .replaceAll(TAG.FORM.differences, document.getElementById('1a3a0e59f6289fc73e6834c3709c1ffa').value);
     }
     const createAudioRow = () => {
+        const lastAudioRow = findLastTitleRow('Аудио');
+        console.log(lastAudioRow);
         if (lastAudioRow) {
             additionalVoiceRowCount++;
             const newRow = document.createElement('tr');
-            newRow.id = `new_audio_row_${additionalVoiceRowCount}`
-
+            newRow.id = `${newRowSubstringId}${additionalVoiceRowCount}`;
+            const inputId = `audio_tech_info_${additionalVoiceRowCount}`;
+            const selectId = `lang_anime_${additionalVoiceRowCount}`;
+            const titleId = `about_audio_${additionalVoiceRowCount}`;
             const titleCell = document.createElement('td');
             titleCell.className = 'rel-title';
             titleCell.textContent = `Аудио #${additionalVoiceRowCount}:`;
@@ -1270,7 +1218,7 @@ $Screenshots$
             const inputElement = document.createElement('input');
             inputElement.className = 'rel-el rel-input';
             inputElement.type = 'text';
-            inputElement.id = `audio_tech_info_${additionalVoiceRowCount}`;
+            inputElement.id = inputId;
             inputElement.maxLength = 200;
             inputElement.size = 80;
 
@@ -1280,7 +1228,7 @@ $Screenshots$
 
             const langSelect = document.createElement('select');
             langSelect.className = 'rel-el rel-input rel-single-sel';
-            langSelect.id = `lang_anime_${additionalVoiceRowCount}`;
+            langSelect.id = selectId;
 
             const emptyOption = document.createElement('option');
             emptyOption.value = '';
@@ -1311,7 +1259,7 @@ $Screenshots$
             const voiceInputElement = document.createElement('input');
             voiceInputElement.className = 'rel-el rel-input';
             voiceInputElement.type = 'text';
-            voiceInputElement.id = `about_audio_${additionalVoiceRowCount}`;
+            voiceInputElement.id = titleId;
             voiceInputElement.maxLength = 200;
             voiceInputElement.size = 40;
 
@@ -1335,6 +1283,14 @@ $Screenshots$
             newRow.appendChild(inputsCell);
 
             lastAudioRow.parentNode.insertBefore(newRow, lastAudioRow.nextSibling);
+
+            return {
+                audio: document.getElementById(inputId),
+                lang: document.getElementById(selectId),
+                title: document.getElementById(titleId),
+                voiceSelectId: result.json.voiceSelectId,
+                voiceTypeSelectId: result.json.voiceTypeSelectId
+            };
         }
     }
     const createSubRow = () => {
