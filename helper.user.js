@@ -413,6 +413,7 @@ $Screenshots$
         const titleCell = newRow.insertCell(0);
         titleCell.className = 'rel-title';
         titleCell.innerText = 'Ссылка на аниме:';
+        titleCell.appendChild(createNewScriptSpan());
 
         const inputsCell = newRow.insertCell(1);
         inputsCell.className = 'rel-inputs';
@@ -423,7 +424,6 @@ $Screenshots$
         textField.id = 'titleLink';
         textField.maxLength = 200;
         textField.size = 80;
-        textField.placeholder = '';
         inputsCell.appendChild(textField);
 
         const freeEl = document.createElement('span');
@@ -1162,7 +1162,8 @@ $Screenshots$
 
             const titleCell = document.createElement('td');
             titleCell.className = 'rel-title';
-            titleCell.textContent = `Аудио ${additionalVoiceRowCount}:`;
+            titleCell.textContent = `Аудио #${additionalVoiceRowCount}:`;
+            titleCell.appendChild(createNewScriptSpan());
             newRow.appendChild(titleCell);
 
             const inputsCell = document.createElement('td');
@@ -1241,12 +1242,57 @@ $Screenshots$
     const createSubRow = () => {
 
     }
+    const createExtRow = () => {
+        const findTechRow = (title) => {
+            let element = null;
+            getTableTitles().forEach(function(titleElement) {
+                if (titleElement.textContent.includes(title)) {
+                    element = titleElement.parentElement;
+                }
+            });
+            return element;
+        }
+
+        const newRow = document.createElement('tr');
+        const titleCell = newRow.insertCell(0);
+        titleCell.className = 'rel-title';
+        titleCell.innerText = 'Подробные тех. данные внешнего аудио:';
+        titleCell.appendChild(createNewScriptSpan());
+
+        const inputsCell = newRow.insertCell(1);
+        inputsCell.className = 'rel-inputs';
+
+        const textField = document.createElement('textarea');
+        textField.className = 'rel-el rel-input';
+        textField.id = 'ext_audio_area';
+
+        const freeEl = document.createElement('span');
+        freeEl.className = 'rel-el rel-free-el';
+        freeEl.innerText = 'Вставьте информацию из отчета программы MediaInfo';
+
+        inputsCell.appendChild(textField);
+        inputsCell.appendChild(freeEl);
+
+        const techRow = findTechRow('Подробные тех. данные');
+        techRow.parentNode.insertBefore(newRow, techRow);
+    }
+
+    const createNewScriptSpan = () => {
+        const scriptField = document.createElement('span');
+        scriptField.style.display = 'block';
+        scriptField.style.color = 'gray'
+        scriptField.style.fontStyle = 'italic';
+        scriptField.style.fontSize = 'smaller';
+        scriptField.innerText = '(script row)';
+        return scriptField;
+    }
     const init = () => {
         addVoiceFields();
         addUrlRow();
         addActionRow();
         addTechButton();
         createModal();
+        createExtRow();
     }
 
     init();
