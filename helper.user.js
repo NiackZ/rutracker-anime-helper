@@ -966,16 +966,12 @@ $Screenshots$
                         }
 
                         if (techData.audioInfo.ext) {
-                            console.log('ext');
                             const audioExtList = techData.audioInfo.ext;
                             const audioIntList = techData.audioInfo.int;
                             if (audioIntList !== null && audioIntList.length > 0) {
                                 const intCount = audioIntList.length;
-                                if (intCount > 3) {
-                                    processAudioInfo(audioExtList, [], 'внешним файлом');
-                                } else {
-                                    processAudioInfo(audioExtList, audioFields.slice(intCount), 'внешним файлом');
-                                }
+                                const processType = intCount > 3 ? [] : audioFields.slice(intCount);
+                                processAudioInfo(audioExtList, processType, 'внешним файлом');
                             } else if (audioExtList.length > 0) {
                                 processAudioInfo(audioExtList, audioFields, 'внешним файлом');
                             }
@@ -1283,7 +1279,7 @@ $Screenshots$
             newRow.appendChild(inputsCell);
 
             lastAudioRow.parentNode.insertBefore(newRow, lastAudioRow.nextSibling);
-
+            console.log(`Добавлена новая строка с Аудио #${additionalVoiceRowCount}`);
             return {
                 audio: document.getElementById(inputId),
                 lang: document.getElementById(selectId),
