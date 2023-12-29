@@ -1018,6 +1018,7 @@ $Screenshots$
             alert("Вставьте MediaInfo в поле \"Подробные тех. данные\" и нажмите \"Заполнить тех. данные\"");
             return;
         }
+        const audio = miInfo.audioInfo;
         let code = template;
         const qualityValue = document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value;
         const header = () => {
@@ -1039,23 +1040,48 @@ $Screenshots$
             if (animeInfo.names?.en) {
                 names.push(animeInfo.names.en);
             }
-            const hasRussianAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.RUS.toLowerCase());
-            const hasChineseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.CHI.toLowerCase());
-            const hasEnglishAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.ENG.toLowerCase());
-            const hasKazakhAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.KAZ.toLowerCase());
-            const hasJapaneseAudio = miInfo.audioInfo.some(track => track.language?.toLowerCase() === LANG.JAP.toLowerCase());
-            const hasSubtitles = miInfo.textInfo.length > 0;
+            function checkAudioLanguages(audioArray) {
+                return {
+                    hasRussian: audioArray.some(track => track.language?.toLowerCase() === LANG.RUS.toLowerCase()),
+                    hasChinese: audioArray.some(track => track.language?.toLowerCase() === LANG.CHI.toLowerCase()),
+                    hasEnglish: audioArray.some(track => track.language?.toLowerCase() === LANG.ENG.toLowerCase()),
+                    hasKazakh: audioArray.some(track => track.language?.toLowerCase() === LANG.KAZ.toLowerCase()),
+                    hasJapanese: audioArray.some(track => track.language?.toLowerCase() === LANG.JAP.toLowerCase()),
+                };
+            }
+            const intResult = checkAudioLanguages(audio.int);
+            const extResult = checkAudioLanguages(audio.ext);
+            const hasRussianAudio = intResult.hasRussian || extResult.hasRussian;
+            const hasChineseAudio = intResult.hasChinese || extResult.hasChinese;
+            const hasEnglishAudio = intResult.hasEnglish || extResult.hasEnglish;
+            const hasKazakhAudio = intResult.hasKazakh || extResult.hasKazakh;
+            const hasJapaneseAudio = intResult.hasJapanese || extResult.hasJapanese;
 
-            let audioDescription = (hasRussianAudio ? "RUS(int), " : "") +
+            const hasSubtitles = miInfo.textInfo.length > 0;
+            let rusString = '';
+
+            if (hasRussianAudio) {
+                const arr = [];
+                if (extResult.hasRussian) {
+                    arr.push('int')
+                }
+                if (intResult.hasRussian) {
+                    arr.push('ext')
+                }
+                rusString = `RUS (${arr.join('/')})`;
+            }
+
+            const anyLang = hasRussianAudio || hasEnglishAudio || hasChineseAudio || hasKazakhAudio || hasJapaneseAudio;
+            let audioDescription = rusString +
                 (hasEnglishAudio ? "ENG, " : "") +
                 (hasChineseAudio ? "CHI, " : "")+
                 (hasKazakhAudio ? "KAZ, " : "") +
                 (hasJapaneseAudio ? "JAP" : "") +
-                (hasRussianAudio || hasEnglishAudio || hasChineseAudio || hasKazakhAudio || hasJapaneseAudio ? "+" : "") +
-                (hasSubtitles ? "Sub" : "");
+                (anyLang && hasSubtitles ? "+Sub" : "");
             if (!audioDescription) {
                 audioDescription="JAP"
             }
+
             const spCount = animeInfo.episodes?.filter(ep => ep.type === episodeType.SP).length || 0;
             const headerType = spCount > 0 ? `${animeInfo.type.shortType}+${episodeType.SP}` : animeInfo.type.shortType;
             const episodes = spCount > 0 ? `${animeInfo.type.episodes}+${spCount}` : animeInfo.type.episodes;
@@ -1092,13 +1118,9 @@ $Screenshots$
             }
             return names.join(separator);
         };
-
         const formatLink = (name, link) => `[url=${link}]${name}[/url]`;
-
         const studioNames = () => animeInfo.studios.map(studio => studio.name).join(', ');
-
         const studio = () => animeInfo.studios.map(studio => formatLink(studio.name, studio.link)).join(', ');
-
         const episodes = () => {
             return document.getElementById("bd78750529cad34e379eca8e6a255d42").value;
         }
@@ -1152,7 +1174,7 @@ $Screenshots$
 
         if (matchAudio) {
             const audioTemplate = matchAudio[1];
-            const replacement = miInfo.audioInfo.map((info, index) => {
+            const replacement = audio.int.map((info, index) => {
                 const flag = getFlagByLang(info.language);
                 return audioTemplate.trim()
                     .replace(TAG.TEMPLATE.index, index + 1)
