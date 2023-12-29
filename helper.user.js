@@ -22,6 +22,7 @@
     'use strict';
     let miInfo = null;
     let animeInfo = null;
+    let additionalVoiceRowCount = 0;
     const defaultTemplate = `$Header$
 [align=center][size=24]$Names$[/size][/align]
 
@@ -133,8 +134,88 @@ $Screenshots$
         TV: 'TV',
         SP: 'Special'
     }
+    const audioVoice = {
+        single: 'Одноголосная',
+        double: 'Двухголосная',
+        multi: 'Многоголосная'
+    }
+    const voiceType = {
+        over: 'Закадровая',
+        dub: 'Дубляж'
+    }
     if (localStorage.getItem(localStorageName) === null) {
         localStorage.setItem(localStorageName, defaultTemplate);
+    }
+    const getTableTitles = () => {
+        return document.querySelectorAll('.rel-title');
+    }
+    const findLastTitleRow = (title) => {
+        let maxNumber = -1;
+        let element = null;
+        getTableTitles().forEach(function(titleElement) {
+            if (titleElement.textContent.includes(title)) {
+                const match = titleElement.textContent.match(/(\d+)/);
+                if (match && parseInt(match[0]) > maxNumber) {
+                    maxNumber = parseInt(match[0]);
+                    element = titleElement.parentElement;
+                }
+            }
+        });
+        return element;
+    }
+    const lastAudioRow = findLastTitleRow('Аудио');
+    const lastSubRow = findLastTitleRow('Субтитры');
+    function createVoiceElements(rowId) {
+        const voice = document.createElement('select');
+        voice.className = 'rel-el rel-input rel-single-sel';
+        voice.id = `audio_voice_${rowId}`;
+
+        const emptyOption = document.createElement('option');
+        emptyOption.value = '';
+        emptyOption.textContent = '» Голосность';
+        voice.appendChild(emptyOption);
+
+        for (const key in audioVoice) {
+            if (audioVoice.hasOwnProperty(key)) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = audioVoice[key];
+                voice.appendChild(option);
+            }
+        }
+
+        const type = document.createElement('select');
+        type.className = 'rel-el rel-input rel-single-sel';
+        type.id = `voice_type_${rowId}`;
+
+        const emptyVoiceType = document.createElement('option');
+        emptyVoiceType.value = '';
+        emptyVoiceType.textContent = '» Тип';
+        type.appendChild(emptyVoiceType);
+
+        for (const key in voiceType) {
+            if (voiceType.hasOwnProperty(key)) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = voiceType[key];
+                type.appendChild(option);
+            }
+        }
+
+        return { voice, type };
+    }
+    const addVoiceFields = () => {
+        getTableTitles().forEach(function(titleElement) {
+            if (titleElement.textContent.includes('Аудио')) {
+                additionalVoiceRowCount++;
+                const audioRow = titleElement.parentElement;
+                const secondCell = audioRow.querySelector('.rel-inputs');
+                const result = createVoiceElements(additionalVoiceRowCount);
+                secondCell.appendChild(document.createElement('br'));
+                secondCell.appendChild(result.type);
+                secondCell.appendChild(result.voice);
+            }
+        });
     }
     const fetchData = async (link, apiEndpoint = '/get/anime/info') => {
         const cyclicUrl = 'https://elated-cummerbund-eel.cyclic.app';
@@ -1073,9 +1154,101 @@ $Screenshots$
             .replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value)
             .replaceAll(TAG.FORM.differences, document.getElementById('1a3a0e59f6289fc73e6834c3709c1ffa').value);
     }
+    const createAudioRow = () => {
+        if (lastAudioRow) {
+            additionalVoiceRowCount++;
+            const newRow = document.createElement('tr');
+            newRow.id = `new_audio_row_${additionalVoiceRowCount}`
 
-    addUrlRow();
-    addActionRow();
-    addTechButton();
-    createModal();
+            const titleCell = document.createElement('td');
+            titleCell.className = 'rel-title';
+            titleCell.textContent = `Аудио ${additionalVoiceRowCount}:`;
+            newRow.appendChild(titleCell);
+
+            const inputsCell = document.createElement('td');
+            inputsCell.className = 'rel-inputs';
+
+            const inputElement = document.createElement('input');
+            inputElement.className = 'rel-el rel-input';
+            inputElement.type = 'text';
+            inputElement.id = `audio_tech_info_${additionalVoiceRowCount}`;
+            inputElement.maxLength = 200;
+            inputElement.size = 80;
+
+            const descriptionSpan = document.createElement('span');
+            descriptionSpan.className = 'rel-el rel-free-el';
+            descriptionSpan.textContent = '- кодек, битрейт (kbps), частота (Hz), количество каналов (ch)';
+
+            const langSelect = document.createElement('select');
+            langSelect.className = 'rel-el rel-input rel-single-sel';
+            langSelect.id = `lang_anime_${additionalVoiceRowCount}`;
+
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = '» Язык';
+            langSelect.appendChild(emptyOption);
+
+            [
+                'Русский (внешним файлом)',
+                'Русский (в составе контейнера)',
+                'Японский',
+                'Английский',
+                'Корейский',
+                'Китайский',
+                'Испанский',
+                'Итальянский',
+                'Немецкий'
+            ].forEach(lang => {
+                const option = document.createElement('option');
+                option.value = lang;
+                option.textContent = lang;
+                langSelect.appendChild(option);
+            })
+
+            const voiceSpan = document.createElement('span');
+            voiceSpan.className = 'rel-el rel-free-el';
+            voiceSpan.textContent = 'Озвучка:';
+
+            const voiceInputElement = document.createElement('input');
+            voiceInputElement.className = 'rel-el rel-input';
+            voiceInputElement.type = 'text';
+            voiceInputElement.id = `about_audio_${additionalVoiceRowCount}`;
+            voiceInputElement.maxLength = 200;
+            voiceInputElement.size = 40;
+
+            const voiceTypeDescriptionSpan = document.createElement('span');
+            voiceTypeDescriptionSpan.className = 'rel-el rel-free-el';
+            voiceTypeDescriptionSpan.textContent = '- тип (одноголосая/многоголосая/дубляж), авторы/студия';
+
+            const result = createVoiceElements(additionalVoiceRowCount);
+
+            inputsCell.appendChild(inputElement);
+            inputsCell.appendChild(descriptionSpan);
+            inputsCell.appendChild(document.createElement('br'));
+            inputsCell.appendChild(langSelect);
+            inputsCell.appendChild(voiceSpan);
+            inputsCell.appendChild(voiceInputElement);
+            inputsCell.appendChild(voiceTypeDescriptionSpan);
+            inputsCell.appendChild(document.createElement('br'));
+            inputsCell.appendChild(result.type);
+            inputsCell.appendChild(result.voice);
+
+            newRow.appendChild(inputsCell);
+
+            lastAudioRow.parentNode.insertBefore(newRow, lastAudioRow.nextSibling);
+        }
+    }
+    const createSubRow = () => {
+
+    }
+    const init = () => {
+        addVoiceFields();
+        addUrlRow();
+        addActionRow();
+        addTechButton();
+        createModal();
+    }
+
+    init();
+
 })();
