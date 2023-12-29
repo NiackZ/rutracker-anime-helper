@@ -58,7 +58,7 @@ $Episodes$
 $Screenshots$
 [/spoiler]`;
     const localStorageName = 'animeTemplate';
-    const newRowSubstringId = 'new_audio_row_';
+    const newAudioRowSubstringId = 'new_audio_row_';
     const LANG = {
         RUS: "Русский",
         ENG: "Английский",
@@ -167,8 +167,6 @@ $Screenshots$
         });
         return element;
     }
-    let lastAudioRow = findLastTitleRow('Аудио');
-    const lastSubRow = findLastTitleRow('Субтитры');
     function createVoiceElements(rowId) {
         const json = {
             voiceSelectId: `audio_voice_${rowId}`,
@@ -956,8 +954,8 @@ $Screenshots$
                         }
 
                         //сброс значений
-                        const elementsToDelete = document.querySelectorAll(`[id^="${newRowSubstringId}"]`);
-                        elementsToDelete.forEach(element => element.remove());
+                        const audioRowToDelete = document.querySelectorAll(`[id^="${newAudioRowSubstringId}"]`);
+                        audioRowToDelete.forEach(element => element.remove());
                         additionalVoiceRowCount = 3;
 
                         if (techData.audioInfo.int) {
@@ -1194,11 +1192,10 @@ $Screenshots$
     }
     const createAudioRow = () => {
         const lastAudioRow = findLastTitleRow('Аудио');
-        console.log(lastAudioRow);
         if (lastAudioRow) {
             additionalVoiceRowCount++;
             const newRow = document.createElement('tr');
-            newRow.id = `${newRowSubstringId}${additionalVoiceRowCount}`;
+            newRow.id = `${newAudioRowSubstringId}${additionalVoiceRowCount}`;
             const inputId = `audio_tech_info_${additionalVoiceRowCount}`;
             const selectId = `lang_anime_${additionalVoiceRowCount}`;
             const titleId = `about_audio_${additionalVoiceRowCount}`;
@@ -1289,9 +1286,6 @@ $Screenshots$
             };
         }
     }
-    const createSubRow = () => {
-
-    }
     const createExtRow = () => {
         const findTechRow = (title) => {
             let element = null;
@@ -1326,7 +1320,6 @@ $Screenshots$
         const techRow = findTechRow('Подробные тех. данные');
         techRow.parentNode.insertBefore(newRow, techRow);
     }
-
     const createNewScriptSpan = () => {
         const scriptField = document.createElement('span');
         scriptField.style.display = 'block';
