@@ -888,7 +888,6 @@ $Screenshots$
                             audioField.lang.value = "";
                             audioField.title.value = "";
                         });
-
                         textField.forEach(textField => {
                             textField.text.value = "";
                             textField.lang.value = "";
@@ -920,7 +919,8 @@ $Screenshots$
                             }
                             video.value = videoInfo.join(', ');
                         }
-                        if (techData.audioInfo?.int) {
+
+                        if (techData.audioInfo.int) {
                             const audioList = techData.audioInfo.int;
                             for (let i = 0; i < audioList.length; i++) {
                                 const audio = audioList[i];
@@ -952,6 +952,91 @@ $Screenshots$
                                 }
                             }
                         }
+                        if (techData.audioInfo.ext) {
+                            console.log('ext');
+                            const audioExtList = techData.audioInfo.ext;
+                            const audioIntList = techData.audioInfo.int;
+                            if (audioIntList !== null && audioIntList.length > 0) {
+                                const intCount = audioIntList.length;
+                                if (intCount > 3) {
+                                    //новые поля нужны
+                                    console.log('Новые поля');
+                                }
+                                else {
+                                    let audioFieldNum = intCount;
+                                    //часть полей дозаполнить
+                                    for (let i = 0; i < audioExtList.length; i++) {
+                                        const audio = audioExtList[i];
+                                        const audioBlock = audioFields[audioFieldNum];
+                                        if (!audioBlock) {
+                                            console.log('[2] Кончились поля Аудио');
+                                            break
+                                        }
+                                        const audioInfo = [];
+                                        if (audio?.language) {
+                                            audioInfo.push(audio.language);
+                                        }
+                                        if (audio?.codec) {
+                                            audioInfo.push(audio.codec);
+                                        }
+                                        if (audio?.bitRate) {
+                                            audioInfo.push(audio.bitRate);
+                                        }
+                                        if (audio?.sampleRate) {
+                                            audioInfo.push(audio.sampleRate);
+                                        }
+                                        if (audio?.channels) {
+                                            audioInfo.push(`${audio.channels} канала`);
+                                        }
+                                        audioBlock.audio.value = audioInfo.join(', ');
+                                        setOptionIfExists(audioBlock.lang, audio.language === LANG.RUS
+                                            ? `${LANG.RUS} (внешним файлом)`
+                                            : audio.language
+                                        );
+                                        if (audio?.title) {
+                                            audioBlock.title.value = audio.title;
+                                        }
+                                        audioFieldNum++;
+                                    }
+                                }
+                            }
+                            else if (audioExtList.length > 0) {
+                                // все поля Аудио свободны
+                                for (let i = 0; i < audioExtList.length; i++) {
+                                    const audio = audioList[i];
+                                    const audioBlock = audioFields[i];
+                                    if (!audioBlock) {
+                                        console.log('[3] Кончились поля Аудио');
+                                        break
+                                    }
+                                    const audioInfo = [];
+                                    if (audio?.language) {
+                                        audioInfo.push(audio.language);
+                                    }
+                                    if (audio?.codec) {
+                                        audioInfo.push(audio.codec);
+                                    }
+                                    if (audio?.bitRate) {
+                                        audioInfo.push(audio.bitRate);
+                                    }
+                                    if (audio?.sampleRate) {
+                                        audioInfo.push(audio.sampleRate);
+                                    }
+                                    if (audio?.channels) {
+                                        audioInfo.push(`${audio.channels} канала`);
+                                    }
+                                    audioBlock.audio.value = audioInfo.join(', ');
+                                    setOptionIfExists(audioBlock.lang, audio.language === LANG.RUS
+                                        ? `${LANG.RUS} (внешним файлом)`
+                                        : audio.language
+                                    );
+                                    if (audio?.title) {
+                                        audioBlock.title.value = audio.title;
+                                    }
+                                }
+                            }
+                        }
+
                         if (techData.textInfo) {
                             for (let i = 0; i < techData.textInfo.length; i++) {
                                 const text = techData.textInfo[i];
