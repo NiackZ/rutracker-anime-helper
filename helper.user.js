@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.2
+// @version      5.3
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -129,7 +129,8 @@ $Screenshots$
             channels: '{channels}',
             title: '{title}',
             format: '{format}',
-            type: '{type}'
+            type: '{type}',
+            voice: '{voice}'
         }
     }
     const episodeType = {
@@ -426,6 +427,7 @@ $Screenshots$
     }
     const addUrlRow = () => {
         const tbody = document.getElementById('rel-tpl');
+        if (!tbody) return;
         const newRow = tbody.insertRow(0);
 
         const titleCell = newRow.insertCell(0);
@@ -503,6 +505,7 @@ $Screenshots$
     }
     const addActionRow = () => {
         const tbody = document.getElementById('rel-tpl');
+        if (!tbody) return;
         const newRow = tbody.insertRow(0);
 
         const actionCell = newRow.insertCell(0);
@@ -636,6 +639,7 @@ $Screenshots$
         <b>${TAG.TEMPLATE.codec}</b> — кодек; <b>${TAG.TEMPLATE.bitRate}</b> — битрейт; <br>
         <b>${TAG.TEMPLATE.sampleRate}</b> — частота; <b>${TAG.TEMPLATE.bitDepth}</b> — битовая глубина;<br>
         <b>${TAG.TEMPLATE.channels}</b> — количество каналов; <b>${TAG.TEMPLATE.title}</b> — название;<br>
+        <b>${TAG.TEMPLATE.type}</b> — 'в составе контейнера' или 'внешним файлом'; <b>${TAG.TEMPLATE.voice}</b> — тип и голосность;<br>
         <br>
         <b>${TAG.SUB.start}</b> — начало блока субтитров; <b>${TAG.SUB.end}</b> — конец блока субтитров;<br>
         <br>
@@ -645,6 +649,7 @@ $Screenshots$
         <br>
         <i>${TAG.TEMPLATE.language}</i> — поддерживает следующие языки: русский, английский, японский, китайский, казахский;<br>
         <i>${TAG.TEMPLATE.flag}</i> — поддерживает флаги: русский, английский, японский;<br>
+        <i>${TAG.TEMPLATE.voice}</i> — строка формируется в том случае, если значения выбраны из списка в строке "Аудио"<br>
     `;
 
         modalContent.appendChild(infoContainer);
@@ -712,6 +717,7 @@ $Screenshots$
         }
 
         const openButton = document.getElementById('setTemplateButton');
+        if (!openButton) return;
         openButton.addEventListener('click', openModal);
     }
     const setOptionIfExists = (select, value) => {
@@ -1186,20 +1192,59 @@ $Screenshots$
             const audios = [];
             if (!!audio.int) {
                 audio.int.forEach(item => {
-                   item.type = 'int';
+                   item.type = 'в составе контейнера';
                    audios.push(item);
                 });
             }
             if (!!audio.ext) {
                 audio.ext.forEach(item => {
-                    item.type = 'ext';
+                    item.type = 'внешним файлом';
                     audios.push(item);
                 });
             }
+            const elements = document.querySelectorAll('[id^="voice_type_"], [id^="audio_voice_"]');
+            const voiceIdsData = {};
+            elements.forEach(element => {
+                const match = element.id.match(/\d+$/);
+                if (match) {
+                    const digit = match[0];
+                    if (!voiceIdsData[digit]) {
+                        voiceIdsData[digit] = {};
+                    }
+                    if (element.id.startsWith("voice_type_")) {
+                        voiceIdsData[digit].voiceId = element.id;
+                    } else if (element.id.startsWith("audio_voice_")) {
+                        voiceIdsData[digit].audioVoiceId = element.id;
+                    }
+                }
+            });
+            const generateVoiceStr = (audioVal, voiceVal) => {
+                const formattedVoice = audioVoice[audioVal];
+                const formattedType = voiceType[voiceVal];
+                if (formattedVoice) {
+                    if (voiceVal === 'dub') {
+                        return `${formattedVoice.replaceAll('ая', 'ый')} ${formattedType}`;
+                    } else if (voiceVal === 'over') {
+                        return `${formattedVoice} ${formattedType}`;
+                    } else {
+                        return formattedVoice;
+                    }
+                } else if (formattedType) {
+                    return formattedType;
+                }
+                return '';
+            }
+
             const replacement = audios.map((info, index) => {
+                const _index = index + 1;
+                const voiceString = generateVoiceStr(
+                    document.getElementById(voiceIdsData[_index]?.audioVoiceId)?.value,
+                    document.getElementById(voiceIdsData[_index]?.voiceId)?.value
+                )
+
                 const flag = getFlagByLang(info.language);
                 return audioTemplate.trim()
-                    .replace(TAG.TEMPLATE.index, index + 1)
+                    .replace(TAG.TEMPLATE.index, _index)
                     .replace(TAG.TEMPLATE.flag, flag ? flag : TAG.TEMPLATE.flag)
                     .replace(TAG.TEMPLATE.language, info.language ? info.language : TAG.TEMPLATE.language)
                     .replace(TAG.TEMPLATE.codec, info.codec ? info.codec : TAG.TEMPLATE.codec)
@@ -1209,6 +1254,7 @@ $Screenshots$
                     .replace(TAG.TEMPLATE.channels, info.channels ? info.channels : TAG.TEMPLATE.channels)
                     .replace(TAG.TEMPLATE.title, info.title ? info.title : TAG.TEMPLATE.title)
                     .replace(TAG.TEMPLATE.type, info.type ? info.type : TAG.TEMPLATE.type)
+                    .replace(TAG.TEMPLATE.voice, voiceString ? voiceString.toLowerCase() : TAG.TEMPLATE.voice)
             }).join('\n');
 
             code = code.replace(new RegExp(`${TAG.AUDIO.start}(.*?)${TAG.AUDIO.end}`), replacement).trim();
@@ -1363,6 +1409,7 @@ $Screenshots$
         inputsCell.appendChild(freeEl);
 
         const techRow = findTechRow('Подробные тех. данные');
+        if (!techRow) return;
         techRow.parentNode.insertBefore(newRow, techRow);
     }
     const createNewScriptSpan = () => {
