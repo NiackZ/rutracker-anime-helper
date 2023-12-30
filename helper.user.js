@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.3
+// @version      5.4
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -377,12 +377,12 @@ $Screenshots$
         const getRegexBlocks = {
             VIDEO: /Video([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/,
             VIDEO_RU: /Видео([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/,
-            AUDIO: /Audio #([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
-            AUDIO_RU: /Аудио #([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
+            AUDIO: /Audio([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
+            AUDIO_RU: /Аудио([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
             AUDIO_EXT: /Audio([\s\S]+?)(?=Audio|$)/g,
             AUDIO_RU_EXT: /Аудио([\s\S]*?)(?=Аудио|$)/g,
-            TEXT: /Text #([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
-            TEXT_RU: /Текст #([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
+            TEXT: /Text([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
+            TEXT_RU: /Текст([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/g,
             GENERAL: /General([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/,
             GENERAL_RU: /Общее([\s\S]+?)(?=(\n\n|\r\n\r\n|$))/
         }
