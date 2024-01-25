@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.4
+// @version      5.5
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -753,9 +753,11 @@ $Screenshots$
             rusName.value = anime.names.ru;
         }
         let fillRomaji = true;
-        anime.names.en = anime.names.en
-            .replace('[', '')
-            .replace(']', '');
+        if (!!anime.name.en) {
+            anime.names.en = anime.names.en
+                .replace('[', '')
+                .replace(']', '');
+        }
         if (anime.names.en) {
             engName.value = anime.names.en;
         }
