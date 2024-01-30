@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.7
+// @version      5.8
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -1076,10 +1076,10 @@ $Screenshots$
             if (hasRussianAudio) {
                 const arr = [];
                 if (extResult?.hasRussian) {
-                    arr.push('int')
+                    arr.push('ext')
                 }
                 if (intResult?.hasRussian) {
-                    arr.push('ext')
+                    arr.push('int')
                 }
                 langArray.push(`RUS(${arr.join('/')})`);
             }
