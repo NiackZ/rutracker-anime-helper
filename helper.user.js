@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.6
+// @version      5.7
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -1029,7 +1029,11 @@ $Screenshots$
         }
         const audio = miInfo.audioInfo;
         let code = template;
-        const qualityValue = document.getElementById('c7d386dc7aa7d073d3d451fd279461da').value;
+        let qualityElement = document.getElementById('c7d386dc7aa7d073d3d451fd279461da');//HD
+        if (qualityElement == null) {
+            qualityElement = document.getElementById('video_quality_cart_serial');//QC
+        }
+        const qualityValue = qualityElement.value;
         const header = () => {
             const names = [];
             if (animeInfo.names?.ru) {
