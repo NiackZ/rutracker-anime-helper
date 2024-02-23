@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.8
+// @version      5.9
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -822,10 +822,11 @@ $Screenshots$
 
         if (!!anime.episodes) {
             const episodesArray = anime.episodes.map((episode, index) => {
+                const episodeNumber = (index + 1).toString().padStart(2, '0'); // Добавляем ведущие нули
                 if (episode.type === episodeType.TV) {
-                    return `${index + 1}. ${episode.name}`;
+                    return `${episodeNumber}. ${episode.name}`;
                 } else {
-                    return `${index + 1}. ${episode.name} (${episode.type})`;
+                    return `${episodeNumber}. ${episode.name} (${episode.type})`;
                 }
             });
             episodeTextArea.value = episodesArray.join('\n');
