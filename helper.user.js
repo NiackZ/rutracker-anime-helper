@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      6.0
+// @version      6.1
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -24,39 +24,47 @@
     let animeInfo = null;
     let additionalVoiceRowCount = 0;
     const defaultTemplate = `$Header$
-[align=center][size=24]$Names$[/size][/align]
+[font=sans2][align=center][size=28][b]$Names$[/b][/size][/align]
 
 [img=right]$Poster$[/img]
+[size=16]
+[b]Страна[/b] $Country$
+[b]Год выпуска[/b] $Year$
+[b]Жанр[/b] $Genre$
+[b]Тип[/b] $Type$
+[b]Продолжительность[/b] $Count$ эп. по $Duration$
+[b]Режиссер[/b] $Director$
+[b]Студия[/b] $Studio$
+[b]Информационные ссылки[/b] [url=$WA_Link$][b]World Art[/b][/url][b], [/b][url=$Shikimori_Link$][b]Shikimori[/b][/url][b], [/b][url=$MAL_Link$][b]MyAnimeList[/b][/url][b], [/b][url=$AniDb_Link$][b]AniDB[/b][/url], [url=https://www.kinopoisk.ru/film/123/][b]КиноПоиск[/b][/url], [url=https://www.imdb.com/title/123][b]IMDB[/b][/url]
 
-[b]Страна[/b]: $Country$
-[b]Год выпуска[/b]: $Year$
-[b]Жанр[/b]: $Genre$
-[b]Тип[/b]: $Type$
-[b]Продолжительность[/b]: $Count$ эп, $Duration$
-[b]Режиссер[/b]: $Director$
-[b]Студия[/b]: $Studio$
-[b]Информационные ссылки[/b]: [url=$WA_Link$][color=darkred][b]World Art[/b][/color][/url] [b], [/b] [url=$Shikimori_Link$][color=darkred][b]Shikimori[/b][/color][/url] [b], [/b] [url=$MAL_Link$][color=darkred][b]MyAnimeList[/b][/color][/url] [b], [/b] [url=$AniDb_Link$][color=darkred][b]AniDB[/b][/color][/url]
+[b]Описание[/b] $Description$
 
-[b]Описание[/b]: $Description$
+[b]Субтитры[/b]
+_USERSUBS [b]#{index}[/b]: [img=1em]{flag}[/img] {language}, {format}, {title} - ()  USERSUBS_
 
-[b]Субтитры[/b]:
-_USERSUBS [b]#{index}[/b]: {language}, {format}, [color=blue]{title}[/color] USERSUBS_
+[b]Качество[/b] $Quality$ [$Reaper$]
+[b]Формат видео[/b] $Video_ext$
+[b]Видео[/b] $Video_codec$, $Video_width$x$Video_height$ ($Video_aspect$), $Video_bit_rate$, $Video_bit_depth$ bits, $Video_fps$ fps
 
-[b]Качество[/b]: $Quality$ [$Reaper$]
-[b]Формат видео[/b]: $Video_ext$
-[b]Видео[/b]: [color=red]$Video_codec$[/color], $Video_width$x$Video_height$ ($Video_aspect$), $Video_bit_rate$, $Video_fps$ fps, [color=red]$Video_bit_depth$bit[/color]
-[b]Аудио[/b]:
-_USERAUDIO [b]#{index}[/b]: [img=1em]{flag}[/img] {language}, {codec}, {bitRate}, {sampleRate}, {channels} канала - [color=blue]{title}[/color] USERAUDIO_
+[b]Аудио[/b]
+_USERAUDIO [b]#{index}[/b]: [img=1em]{flag}[/img] {language}, {codec}, {bitRate}, {sampleRate}, {bitDepth} bits, {channels} ch- {voice} от {title} {type} USERAUDIO_
 
-[spoiler="Подробные тех. данные"][pre]$MediaInfo$[/pre][/spoiler]
+[b]Все субтитры и озвучки в составе контейнера[/b]
+[/size]
 
 [spoiler="Список эпизодов"]
 $Episodes$
 [/spoiler]
 
-[spoiler="Скриншоты"]
+[spoiler="Скриншоты"][align=center]
 $Screenshots$
-[/spoiler]`;
+[/align][/spoiler]
+
+[spoiler="Отличия от предыдущих раздач"]
+$Differences$
+[/spoiler][/font]
+
+[spoiler="Подробные тех. данные"][pre]$MediaInfo$[/pre][/spoiler]`;
     const localStorageName = 'animeTemplate';
     const newAudioRowSubstringId = 'new_audio_row_';
     const LANG = {
@@ -1056,6 +1064,7 @@ $Screenshots$
         const qualityValue = qualityElement.value;
         const header = () => {
             const names = [];
+
             if (animeInfo.names?.ru) {
                 names.push(animeInfo.names.ru);
             }
