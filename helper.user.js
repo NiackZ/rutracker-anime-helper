@@ -154,6 +154,63 @@ $Differences$
         over: 'Закадровая',
         dub: 'Дубляж'
     }
+    const FIELDS = {
+        RUS_NAME: document.getElementById("title_rus"),
+        ENG_NAME: document.getElementById("title_eng"),
+        OTHER_NAME: document.getElementById("19196242af37f0ad77a7f593b45f8207"),
+        COUNTRY: document.getElementById("country_anime"),
+        YEAR: document.getElementById("year"),
+        GENRE: document.getElementById("genre"),
+        ANIME_TYPE: document.getElementById("anime_type"),
+        EPISODES: document.getElementById("731ffae21574667873e9717a7fa433b5"),
+        DURATION: document.getElementById("playtime"),
+        DIRECTOR: document.getElementById("director"),
+        STUDIO: document.getElementById("c6ed4beb1b80956095e7c0aba867d08f"),
+        DESCRIPTION: document.getElementById("description"),
+        EPISODE_TEXTAREA: document.getElementById("bd78750529cad34e379eca8e6a255d42"),
+        TECH_TEXTAREA: document.getElementById("60503004a43535a7eb84520612a2e26c"),
+        VIDEO_FORMAT: document.getElementById("video_format"),
+        HD_FORMAT: document.getElementById("7dc5360181c073093213c3a33682c1ea"),
+        VIDEO: document.getElementById("video"),
+        AUDIO: [
+            {
+                INFO: document.getElementById("390c478dabbdfa0a78d0f7a1e69d4dfa"),
+                LANG: document.getElementById("lang_anime"),
+                TITLE: document.getElementById("3890534b0fe393e9ff6490d7160b000d")
+            },
+            {
+                INFO: document.getElementById("8f8407c22d6ee07cdee27ef409fc7fb1"),
+                LANG: document.getElementById("lang_anime_2"),
+                TITLE: document.getElementById("59bbcdb0c6493c4faf8a92e7c6345004")
+            },
+            {
+                INFO: document.getElementById("bb467dadf3966b8bed32a178e398bdbb"),
+                LANG: document.getElementById("lang_anime_3"),
+                TITLE: document.getElementById("5c5af4d271c2bcdba51db721004b8de2")
+            }
+        ],
+        SUBS: [
+            {
+                INFO: document.getElementById("38f8b090c53af5748bfc06686db808f6"),
+                LANG: document.getElementById("sub_all_anime"),
+                TITLE: document.getElementById("ea9559bbb5520f92f25309d8194035e2")
+            },
+            {
+                INFO: document.getElementById("0bc605b1fd444b189e35ee70aa5ca5ac"),
+                LANG: document.getElementById("sub_all_anime_2"),
+                TITLE: document.getElementById("7f34a9e3be76d5f4dfc7fd27bc2f745b")
+            },
+            {
+                INFO: document.getElementById("0736e6092bce471f377fe38e33eac723"),
+                LANG: document.getElementById("sub_all_anime_3"),
+                TITLE: document.getElementById("112f186c9190a9cf4d95c151d3a3fe42")
+            }
+        ]
+    }
+    /*
+
+     */
+
     if (localStorage.getItem(localStorageName) === null) {
         localStorage.setItem(localStorageName, defaultTemplate);
     }
@@ -749,96 +806,83 @@ $Differences$
     }
     const fillFields = (anime) => {
         console.log(anime);
-        const rusName = document.getElementById("title_rus");
-        const engName = document.getElementById("title_eng");
-        const othName = document.getElementById("19196242af37f0ad77a7f593b45f8207");
-        const country = document.getElementById("country_anime");
-        const year = document.getElementById("year");
-        const genre = document.getElementById("genre");
-        const animeType = document.getElementById("anime_type");
-        const episodes = document.getElementById("731ffae21574667873e9717a7fa433b5");
-        const duration = document.getElementById("playtime");
-        const director = document.getElementById("director");
-        const studio = document.getElementById("c6ed4beb1b80956095e7c0aba867d08f");
-        const description = document.getElementById("description");
-        const episodeTextArea = document.getElementById("bd78750529cad34e379eca8e6a255d42");
-        description.value = "";
-        director.value = "";
-        episodes.value = "";
-        othName.value = "";
-        episodeTextArea.value = "";
-        anime.names.ru = anime.names.ru
-            ?.replace('[', '(')
-            ?.replace(']', ')');
+
+        FIELDS.DESCRIPTION.value = "";
+        FIELDS.DIRECTOR.value = "";
+        FIELDS.EPISODES.value = "";
+        FIELDS.OTHER_NAME.value = "";
+        FIELDS.EPISODE_TEXTAREA.value = "";
+
         if (anime.names.ru) {
-            rusName.value = anime.names.ru;
+            anime.names.ru = anime.names.ru
+                ?.replace('[', '(')
+                ?.replace(']', ')');
+            FIELDS.RUS_NAME.value = anime.names.ru;
         }
         let fillRomaji = true;
-        if (!!anime.names.en) {
+        if (anime.names.en) {
             anime.names.en = anime.names.en
                 .replace('[', '')
                 .replace(']', '');
-        }
-        if (anime.names.en) {
-            engName.value = anime.names.en;
+            FIELDS.ENG_NAME.value = anime.names.en;
         }
         else {
             if (anime.names.romaji) {
-                engName.value = anime.names.romaji;
+                FIELDS.ENG_NAME.value = anime.names.romaji;
                 fillRomaji = false;
             }
         }
-        if (fillRomaji && anime.names.romaji && engName.value.toLowerCase() !== anime.names.romaji.toLowerCase()) {
-            othName.value = anime.names.romaji;
+        if (fillRomaji && anime.names.romaji && FIELDS.ENG_NAME.value.toLowerCase() !== anime.names.romaji.toLowerCase()) {
+            FIELDS.OTHER_NAME.value = anime.names.romaji;
         }
         else if (anime.names.synonym) {
-            othName.value = othName.value ? `${othName.value} / ${anime.names.synonym}`.trim() : anime.names.synonym;
+            FIELDS.OTHER_NAME.value = FIELDS.OTHER_NAME.value ? `${FIELDS.OTHER_NAME.value} / ${anime.names.synonym}`.trim() : anime.names.synonym;
         }
 
         if (anime.names.kanji) {
-            othName.value = !!othName.value
-                ? `${othName.value} / ${anime.names.kanji}`
+            FIELDS.OTHER_NAME.value = !!FIELDS.OTHER_NAME.value
+                ? `${FIELDS.OTHER_NAME.value} / ${anime.names.kanji}`
                 :anime.names.kanji;
         }
 
         if (anime.country) {
-            setOptionIfExists(country, anime.country);
+            setOptionIfExists(FIELDS.COUNTRY, anime.country);
         }
 
         if (anime.season) {
             if (anime.season.year) {
-                year.value = anime.season.year;
+                FIELDS.YEAR.value = anime.season.year;
             }
         }
 
         if (anime.genres) {
-            genre.value = anime.genres
+            FIELDS.GENRE.value = anime.genres
         }
 
         if (anime.type.shortType) {
-            setOptionIfExists(animeType, anime.type.shortType);
+            setOptionIfExists(FIELDS.ANIME_TYPE, anime.type.shortType);
         }
 
         if (!!anime.type.episodes && Number(anime.type.episodes) > 1) {
-            episodes.value = `${anime.type.episodes} из ${anime.type.episodes}`;
+            FIELDS.EPISODES.value = `${anime.type.episodes} из ${anime.type.episodes}`;
         }
 
         if (anime.type.duration && anime.type.episodes) {
-            duration.value = Number(anime.type.episodes) === 1
+            FIELDS.DURATION.value = Number(anime.type.episodes) === 1
                 ? anime.type.duration
                 : `${anime.type.episodes} эп, ~${anime.type.duration}`;
         }
 
         if (anime.director) {
-            director.value = anime.director;
+            FIELDS.DIRECTOR.value = anime.director;
         }
 
         if (anime.description) {
-            description.value = anime.description;
+            FIELDS.DESCRIPTION.value = anime.description;
         }
 
         if (!!anime.studios) {
-            studio.value = anime.studios.map(st => st.name).join(', ');
+            FIELDS.STUDIO.value = anime.studios.map(st => st.name).join(', ');
         }
 
         if (!!anime.episodes) {
@@ -850,13 +894,12 @@ $Differences$
                     return `${episodeNumber}. ${episode.name} (${episode.type})`;
                 }
             });
-            episodeTextArea.value = episodesArray.join('\n');
+            FIELDS.EPISODE_TEXTAREA.value = episodesArray.join('\n');
         }
 
     }
     const getTechData = () => {
-        const textareaElement = document.getElementById("60503004a43535a7eb84520612a2e26c");
-        return textareaElement.value ? MiParser(textareaElement.value) : null;
+        return FIELDS.TECH_TEXTAREA.value ? MiParser(FIELDS.TECH_TEXTAREA.value) : null;
     }
     const addTechButton = () => {
         const textareaElement = document.getElementById("60503004a43535a7eb84520612a2e26c");
@@ -875,64 +918,27 @@ $Differences$
                     miInfo = techData;
                     console.log(techData);
                     if (techData) {
-                        const videoFormat = document.getElementById("video_format");
-                        const HDFormat = document.getElementById("7dc5360181c073093213c3a33682c1ea");
-                        const video = document.getElementById("video");
-                        const audioFields = [
-                            {
-                                audio: document.getElementById("390c478dabbdfa0a78d0f7a1e69d4dfa"),
-                                lang: document.getElementById("lang_anime"),
-                                title: document.getElementById("3890534b0fe393e9ff6490d7160b000d")
-                            },
-                            {
-                                audio: document.getElementById("8f8407c22d6ee07cdee27ef409fc7fb1"),
-                                lang: document.getElementById("lang_anime_2"),
-                                title: document.getElementById("59bbcdb0c6493c4faf8a92e7c6345004")
-                            },
-                            {
-                                audio: document.getElementById("bb467dadf3966b8bed32a178e398bdbb"),
-                                lang: document.getElementById("lang_anime_3"),
-                                title: document.getElementById("5c5af4d271c2bcdba51db721004b8de2")
-                            }
-                        ]
-                        const textField = [
-                            {
-                                text: document.getElementById("38f8b090c53af5748bfc06686db808f6"),
-                                lang: document.getElementById("sub_all_anime"),
-                                title: document.getElementById("ea9559bbb5520f92f25309d8194035e2")
-                            },
-                            {
-                                text: document.getElementById("0bc605b1fd444b189e35ee70aa5ca5ac"),
-                                lang: document.getElementById("sub_all_anime_2"),
-                                title: document.getElementById("7f34a9e3be76d5f4dfc7fd27bc2f745b")
-                            },
-                            {
-                                text: document.getElementById("0736e6092bce471f377fe38e33eac723"),
-                                lang: document.getElementById("sub_all_anime_3"),
-                                title: document.getElementById("112f186c9190a9cf4d95c151d3a3fe42")
-                            }
-                        ]
 
-                        videoFormat.value = '';
-                        HDFormat.value = '';
-                        video.value = '';
-                        audioFields.forEach(audioField => {
-                            audioField.audio.value = "";
-                            audioField.lang.value = "";
-                            audioField.title.value = "";
+                        FIELDS.VIDEO_FORMAT.value = '';
+                        FIELDS.HD_FORMAT.value = '';
+                        FIELDS.VIDEO.value = '';
+                        FIELDS.AUDIO.forEach(audioField => {
+                            audioField.INFO.value = "";
+                            audioField.LANG.value = "";
+                            audioField.TITLE.value = "";
                         });
-                        textField.forEach(textField => {
-                            textField.text.value = "";
-                            textField.lang.value = "";
-                            textField.title.value = "";
+                        FIELDS.SUBS.forEach(textField => {
+                            textField.INFO.value = "";
+                            textField.LANG.value = "";
+                            textField.TITLE.value = "";
                         });
 
                         if (techData.videoInfo) {
                             if (techData.videoInfo?.fileExt) {
-                                setOptionIfExists(videoFormat, techData.videoInfo.fileExt);
+                                setOptionIfExists(FIELDS.VIDEO_FORMAT, techData.videoInfo.fileExt);
                             }
                             if (techData.videoInfo?.height) {
-                                setOptionIfExists(HDFormat, `${techData.videoInfo?.height}p`);
+                                setOptionIfExists(FIELDS.HD_FORMAT, `${techData.videoInfo?.height}p`);
                             }
                             const videoInfo = [];
                             if (techData.videoInfo?.codec) {
@@ -950,7 +956,7 @@ $Differences$
                             if (techData.videoInfo?.bitDepth) {
                                 videoInfo.push(`${techData.videoInfo.bitDepth} bits`);
                             }
-                            video.value = videoInfo.join(', ');
+                            FIELDS.VIDEO.value = videoInfo.join(', ');
                         }
 
                         const processAudioInfo = (audioList, audioFields, langPrefix) => {
@@ -979,13 +985,13 @@ $Differences$
                                     }
                                     audioInfo.push(`${ch} ch.`);
                                 }
-                                audioBlock.audio.value = audioInfo.join(', ');
-                                setOptionIfExists(audioBlock.lang, audio.language === LANG.RUS
+                                audioBlock.INFO.value = audioInfo.join(', ');
+                                setOptionIfExists(audioBlock.LANG, audio.language === LANG.RUS
                                     ? `${LANG.RUS} (${langPrefix})`
                                     : audio.language
                                 );
                                 if (audio?.title) {
-                                    audioBlock.title.value = audio.title;
+                                    audioBlock.TITLE.value = audio.title;
                                 }
                             }
                         }
@@ -997,7 +1003,7 @@ $Differences$
 
                         if (techData.audioInfo.int) {
                             const audioList = techData.audioInfo.int;
-                            processAudioInfo(audioList, audioFields, 'в составе контейнера');
+                            processAudioInfo(audioList, FIELDS.AUDIO, 'в составе контейнера');
                         }
 
                         if (techData.audioInfo.ext) {
@@ -1005,17 +1011,17 @@ $Differences$
                             const audioIntList = techData.audioInfo.int;
                             if (audioIntList !== null && audioIntList.length > 0) {
                                 const intCount = audioIntList.length;
-                                const processType = intCount > 3 ? [] : audioFields.slice(intCount);
+                                const processType = intCount > 3 ? [] : FIELDS.AUDIO.slice(intCount);
                                 processAudioInfo(audioExtList, processType, 'внешним файлом');
                             } else if (audioExtList.length > 0) {
-                                processAudioInfo(audioExtList, audioFields, 'внешним файлом');
+                                processAudioInfo(audioExtList, FIELDS.AUDIO, 'внешним файлом');
                             }
                         }
 
                         if (techData.textInfo) {
                             for (let i = 0; i < techData.textInfo.length; i++) {
                                 const text = techData.textInfo[i];
-                                const textBlock = textField[i];
+                                const textBlock = FIELDS.SUBS[i];
                                 if (!textBlock) break;
                                 const textInfo = [];
                                 if (text?.language) {
@@ -1025,10 +1031,10 @@ $Differences$
                                     textInfo.push(text.format);
                                 }
                                 textInfo.push("встроенные");
-                                textBlock.text.value = textInfo.join(", ");
-                                setOptionIfExists(textBlock.lang, text.language?.toLowerCase());
+                                textBlock.INFO.value = textInfo.join(", ");
+                                setOptionIfExists(textBlock.LANG, text.language?.toLowerCase());
                                 if (text?.title) {
-                                    textBlock.title.value = text.title;
+                                    textBlock.TITLE.value = text.title;
                                 }
                             }
                         }
@@ -1036,7 +1042,7 @@ $Differences$
                     }
                 }
                 catch (error) {
-                    console.error('Ошибка: ', error.message);
+                    console.error('Ошибка: ', error);
                 }
             };
             buttonSpan.appendChild(fillButton);
@@ -1404,9 +1410,9 @@ $Differences$
             lastAudioRow.parentNode.insertBefore(newRow, lastAudioRow.nextSibling);
             console.log(`Добавлена новая строка с Аудио #${additionalVoiceRowCount}`);
             return {
-                audio: document.getElementById(inputId),
-                lang: document.getElementById(selectId),
-                title: document.getElementById(titleId),
+                INFO: document.getElementById(inputId),
+                LANG: document.getElementById(selectId),
+                TITLE: document.getElementById(titleId),
                 voiceSelectId: result.json.voiceSelectId,
                 voiceTypeSelectId: result.json.voiceTypeSelectId
             };
