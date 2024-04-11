@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      5.9
+// @version      6.0
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -148,6 +148,18 @@ $Screenshots$
     }
     if (localStorage.getItem(localStorageName) === null) {
         localStorage.setItem(localStorageName, defaultTemplate);
+    }
+    const getYearFromReleaseField = (animeObj) => {
+        if (!animeObj.season) {
+            let yearMatch = animeObj.release.match(/\b\d{4}\b/);
+            if (yearMatch) {
+                animeObj.season = {
+                    year: yearMatch[0]
+                };
+            } else {
+                console.warn("Год не найден в строке:", animeObj.release);
+            }
+        }
     }
     const getTableTitles = () => {
         return document.querySelectorAll('.rel-title');
@@ -470,6 +482,7 @@ $Screenshots$
                     animeInfo = null;
                     const response = await fetchData(link);
                     if (!!response.anime) {
+                        getYearFromReleaseField(response.anime);
                         animeInfo = response.anime;
                         fillFields(response.anime);
                     }
@@ -927,7 +940,7 @@ $Screenshots$
                                 videoInfo.push(`${techData.videoInfo.fps} fps`);
                             }
                             if (techData.videoInfo?.bitDepth) {
-                                videoInfo.push(`${techData.videoInfo.bitDepth}bit`);
+                                videoInfo.push(`${techData.videoInfo.bitDepth} bits`);
                             }
                             video.value = videoInfo.join(', ');
                         }
@@ -950,7 +963,13 @@ $Screenshots$
                                     audioInfo.push(audio.sampleRate);
                                 }
                                 if (audio?.channels) {
-                                    audioInfo.push(`${audio.channels} канала`);
+                                    let ch = audio.channels;
+                                    if (ch == 6) {
+                                        ch = "5.1";
+                                    } else if (ch == 8) {
+                                        ch = "7.1";
+                                    }
+                                    audioInfo.push(`${ch} ch.`);
                                 }
                                 audioBlock.audio.value = audioInfo.join(', ');
                                 setOptionIfExists(audioBlock.lang, audio.language === LANG.RUS
