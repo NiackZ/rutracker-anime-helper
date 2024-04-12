@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      6.1
+// @version      6.2
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -172,6 +172,13 @@ $Differences$
         VIDEO_FORMAT: document.getElementById("video_format"),
         HD_FORMAT: document.getElementById("7dc5360181c073093213c3a33682c1ea"),
         VIDEO: document.getElementById("video"),
+        VIDEO_QUALITY: document.getElementById('c7d386dc7aa7d073d3d451fd279461da'),
+        VIDEO_QUALITY_QC: document.getElementById('video_quality_cart_serial'),
+        REAPER: document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67'),
+        POSTER: document.getElementById('poster'),
+        SCREENSHOTS: document.getElementById('screenshots'),
+        MEDIA_INFO: document.getElementById('60503004a43535a7eb84520612a2e26c'),
+        DIFFERENCES: document.getElementById('1a3a0e59f6289fc73e6834c3709c1ffa'),
         AUDIO: [
             {
                 INFO: document.getElementById("390c478dabbdfa0a78d0f7a1e69d4dfa"),
@@ -207,24 +214,9 @@ $Differences$
             }
         ]
     }
-    /*
-
-     */
 
     if (localStorage.getItem(localStorageName) === null) {
         localStorage.setItem(localStorageName, defaultTemplate);
-    }
-    const getYearFromReleaseField = (animeObj) => {
-        if (!animeObj.season) {
-            let yearMatch = animeObj.release.match(/\b\d{4}\b/);
-            if (yearMatch) {
-                animeObj.season = {
-                    year: yearMatch[0]
-                };
-            } else {
-                console.warn("Год не найден в строке:", animeObj.release);
-            }
-        }
     }
     const getTableTitles = () => {
         return document.querySelectorAll('.rel-title');
@@ -547,7 +539,6 @@ $Differences$
                     animeInfo = null;
                     const response = await fetchData(link);
                     if (!!response.anime) {
-                        getYearFromReleaseField(response.anime);
                         animeInfo = response.anime;
                         fillFields(response.anime);
                     }
@@ -1053,40 +1044,46 @@ $Differences$
         }
     }
     const generate = (template) => {
-        if (animeInfo == null) {
-            alert("Вставьте ссылку на аниме и нажмите \"Заполнить\"");
-            return;
-        }
         if (miInfo == null) {
             alert("Вставьте MediaInfo в поле \"Подробные тех. данные\" и нажмите \"Заполнить тех. данные\"");
             return;
         }
         const audio = miInfo.audioInfo;
         let code = template;
-        let qualityElement = document.getElementById('c7d386dc7aa7d073d3d451fd279461da');//HD
+        let qualityElement = FIELDS.VIDEO_QUALITY;//HD
         if (qualityElement == null) {
-            qualityElement = document.getElementById('video_quality_cart_serial');//QC
+            qualityElement = FIELDS.VIDEO_QUALITY_QC;//QC
         }
         const qualityValue = qualityElement.value;
         const header = () => {
             const names = [];
 
-            if (animeInfo.names?.ru) {
-                names.push(animeInfo.names.ru);
+            if (FIELDS.RUS_NAME.value) {
+                names.push(FIELDS.RUS_NAME.value);
             }
-            const romName = animeInfo.names?.romaji;
-            if (romName) {
-                if (romName.toLowerCase() === animeInfo.names?.en?.toLowerCase()) {
-                    if (animeInfo.names.synonym) {
-                        names.push(animeInfo.names.synonym);
+            if (!valueIsEmpty(animeInfo?.names)) {
+                const romName = animeInfo.names?.romaji;
+                if (romName) {
+                    if (romName.toLowerCase() === animeInfo.names?.en?.toLowerCase()) {
+                        if (animeInfo.names.synonym) {
+                            names.push(animeInfo.names.synonym);
+                        }
+                    }
+                    else {
+                        names.push(romName);
                     }
                 }
-                else {
-                    names.push(romName);
-                }
             }
-            if (animeInfo.names?.en) {
-                names.push(animeInfo.names.en);
+            else if (FIELDS.OTHER_NAME.value) {
+                names.push(...FIELDS.OTHER_NAME.value
+                    .split("/")
+                    .filter(n => !valueIsEmpty(n))
+                    .map(n => n.trim())
+                );
+            }
+
+            if (FIELDS.ENG_NAME.value) {
+                names.push(FIELDS.ENG_NAME.value);
             }
             function checkAudioLanguages(audioArray) {
                 if (!audioArray) return null;
@@ -1137,12 +1134,18 @@ $Differences$
                     audioDescription += "+Sub";
                 }
             }
+            let headerType = FIELDS.ANIME_TYPE.value;
+            let episodes = FIELDS.EPISODES.value;
+            if (animeInfo?.episodes) {
+                const spCount = animeInfo.episodes?.filter(ep => ep.type === episodeType.SP).length || 0;
+                if (spCount > 0) {
+                    headerType = `${FIELDS.ANIME_TYPE.value}+${episodeType.SP}`;
+                    episodes = `${animeInfo.type.episodes}+${spCount}`;
+                    episodes = `${episodes} из ${episodes}`;
+                }
+            }
 
-            const spCount = animeInfo.episodes?.filter(ep => ep.type === episodeType.SP).length || 0;
-            const headerType = spCount > 0 ? `${animeInfo.type.shortType}+${episodeType.SP}` : animeInfo.type.shortType;
-            const episodes = spCount > 0 ? `${animeInfo.type.episodes}+${spCount}` : animeInfo.type.episodes;
-
-            return `${names.join(" / ")} [${headerType}] [${episodes} из ${episodes}] [${audioDescription}] [${animeInfo.season.year}, ${animeInfo.genres}, ${qualityValue}] [${miInfo.videoInfo.height}p]`;
+            return `${names.join(" / ")} [${headerType}] [${episodes}] [${audioDescription}] [${FIELDS.YEAR.value}, ${FIELDS.GENRE.value}, ${qualityValue}] [${miInfo.videoInfo.height}p]`;
         }
         const names = () => {
             return formatNames("\n");
@@ -1152,34 +1155,34 @@ $Differences$
         };
         const formatNames = (separator) => {
             const names = [];
-            if (animeInfo.names?.ru) {
-                names.push(animeInfo.names.ru);
+            if (FIELDS.RUS_NAME.value) {
+                names.push(FIELDS.RUS_NAME.value);
             }
-            if (animeInfo.names?.en) {
-                names.push(animeInfo.names.en);
+            if (FIELDS.ENG_NAME.value) {
+                names.push(FIELDS.ENG_NAME.value);
             }
-            const romName = animeInfo.names?.romaji;
-            if (romName) {
-                if (romName.toLowerCase() === animeInfo.names?.en?.toLowerCase()) {
-                    if (animeInfo.names.synonym) {
-                        names.push(animeInfo.names.synonym);
-                    }
-                }
-                else {
-                    names.push(romName);
-                }
-            }
-            if (animeInfo.names?.kanji) {
-                names.push(animeInfo.names.kanji);
+            if (FIELDS.OTHER_NAME.value) {
+                names.push(...FIELDS.OTHER_NAME.value
+                    .split("/")
+                    .filter(n => !valueIsEmpty(n))
+                    .map(n => n.trim())
+                );
             }
             return names.join(separator);
         };
         const formatLink = (name, link) => `[url=${link}]${name}[/url]`;
-        const studioNames = () => animeInfo.studios.map(studio => studio.name).join(', ');
-        const studio = () => animeInfo.studios.map(studio => formatLink(studio.name, studio.link)).join(', ');
-        const episodes = () => {
-            return document.getElementById("bd78750529cad34e379eca8e6a255d42").value;
+        const studioNames = () => {
+            if (!valueIsEmpty(animeInfo)) {
+                return animeInfo.studios.map(studio => studio.name).join(', ');
+            }
+            return FIELDS.STUDIO.value;
         }
+        const studio = () => {
+            if (!valueIsEmpty(animeInfo)) {
+                return animeInfo.studios.map(studio => formatLink(studio.name, studio.link)).join(', ');
+            }
+            return FIELDS.STUDIO.value;
+        };
         const getFlagByLang = (lang) => {
             switch (lang) {
                 case LANG.JAP:
@@ -1195,23 +1198,26 @@ $Differences$
         code = code.replaceAll(TAG.header, header)
             .replaceAll(TAG.names, names)
             .replaceAll(TAG.namesString, namesString)
-            .replaceAll(TAG.country, animeInfo.country)
-            .replaceAll(TAG.year, animeInfo.season.year)
-            .replaceAll(TAG.season, animeInfo.season.name)
-            .replaceAll(TAG.genre, animeInfo.genres)
-            .replaceAll(TAG.type, animeInfo.type.type)
-            .replaceAll(TAG.episodeCount, animeInfo.type.episodes)
-            .replaceAll(TAG.episodeDuration, animeInfo.type.duration)
-            .replaceAll(TAG.director, animeInfo.director)
+            .replaceAll(TAG.country, FIELDS.STUDIO.value)
+            .replaceAll(TAG.year, FIELDS.YEAR.value)
+            .replaceAll(TAG.season, animeInfo?.season.name)
+            .replaceAll(TAG.genre, FIELDS.GENRE.value)
+            .replaceAll(TAG.type, FIELDS.ANIME_TYPE.value)
+            .replaceAll(TAG.episodeCount, animeInfo?.type.episodes)
+            .replaceAll(TAG.episodeDuration, animeInfo?.type.duration
+                ? animeInfo?.type.duration
+                : FIELDS.DURATION.value
+            )
+            .replaceAll(TAG.director, FIELDS.DIRECTOR.value)
             .replaceAll(TAG.studio, studio)
             .replaceAll(TAG.studioNames, studioNames)
-            .replaceAll(TAG.description, animeInfo.description)
-            .replaceAll(TAG.episodes, episodes)
-            .replaceAll(TAG.LINK.AniDb, animeInfo.links.AniDb ? animeInfo.links.AniDb : TAG.LINK.AniDb)
-            .replaceAll(TAG.LINK.ANN, animeInfo.links.ANN ? animeInfo.links.ANN : TAG.LINK.ANN)
-            .replaceAll(TAG.LINK.MAL, animeInfo.links.MAL ? animeInfo.links.MAL : TAG.LINK.MAL)
-            .replaceAll(TAG.LINK.Shikimori, animeInfo.links.Shikimori ? animeInfo.links.Shikimori : TAG.LINK.Shikimori)
-            .replaceAll(TAG.LINK.WA, animeInfo.links.WA ? animeInfo.links.WA : TAG.LINK.WA)
+            .replaceAll(TAG.description, FIELDS.DESCRIPTION.value)
+            .replaceAll(TAG.episodes, FIELDS.EPISODE_TEXTAREA.value)
+            .replaceAll(TAG.LINK.AniDb, animeInfo?.links.AniDb ? animeInfo.links.AniDb : TAG.LINK.AniDb)
+            .replaceAll(TAG.LINK.ANN, animeInfo?.links.ANN ? animeInfo.links.ANN : TAG.LINK.ANN)
+            .replaceAll(TAG.LINK.MAL, animeInfo?.links.MAL ? animeInfo.links.MAL : TAG.LINK.MAL)
+            .replaceAll(TAG.LINK.Shikimori, animeInfo?.links.Shikimori ? animeInfo.links.Shikimori : TAG.LINK.Shikimori)
+            .replaceAll(TAG.LINK.WA, animeInfo?.links.WA ? animeInfo.links.WA : TAG.LINK.WA)
 
             .replaceAll(TAG.VIDEO.ext, miInfo.videoInfo.fileExt)
             .replaceAll(TAG.VIDEO.codec, miInfo.videoInfo.codec)
@@ -1316,11 +1322,11 @@ $Differences$
         }
 
         return code.replaceAll(TAG.FORM.quality, qualityValue)
-            .replaceAll(TAG.FORM.reaper, document.getElementById('ccf5afda3cc4295d97c0bdb89e5dbd67').value)
-            .replaceAll(TAG.FORM.poster, document.getElementById('poster').value)
-            .replaceAll(TAG.FORM.screenshots, document.getElementById('screenshots').value)
-            .replaceAll(TAG.FORM.MI, document.getElementById('60503004a43535a7eb84520612a2e26c').value)
-            .replaceAll(TAG.FORM.differences, document.getElementById('1a3a0e59f6289fc73e6834c3709c1ffa').value);
+            .replaceAll(TAG.FORM.reaper, FIELDS.REAPER.value)
+            .replaceAll(TAG.FORM.poster, FIELDS.POSTER.value)
+            .replaceAll(TAG.FORM.screenshots, FIELDS.SCREENSHOTS.value)
+            .replaceAll(TAG.FORM.MI, FIELDS.MEDIA_INFO.value)
+            .replaceAll(TAG.FORM.differences, FIELDS.DIFFERENCES.value);
     }
     const createAudioRow = () => {
         const lastAudioRow = findLastTitleRow('Аудио');
