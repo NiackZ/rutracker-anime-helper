@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      6.2
+// @version      6.3
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -410,9 +410,11 @@ $Differences$
                 const parseAudioBlock = (blocks, regex) => {
                     return Array.from(blocks).map(audioBlockMatch => {
                         const audioBlock = audioBlockMatch[1].trim();
+                        const codec = parseField(audioBlock, regex.CODEC);
+                        if (codec == null) return null;
                         return {
                             language: translateLanguage(parseField(audioBlock, regex.LANGUAGE)),
-                            codec: parseField(audioBlock, regex.CODEC),
+                            codec,
                             bitRate: parseField(audioBlock, regex.BIT_RATE),
                             sampleRate: parseField(audioBlock, regex.SAMPLING_RATE)?.replaceAll(',', '.'),
                             bitDepth: parseField(audioBlock, regex.BIT_DEPTH),
@@ -421,7 +423,7 @@ $Differences$
                         }
                     });
                 }
-                return parseAudioBlock(blocks, lang === EN ? REGEX_EN : REGEX_RU);
+                return parseAudioBlock(blocks, lang === EN ? REGEX_EN : REGEX_RU).filter(item => !!item);
             }
             return null;
         }
