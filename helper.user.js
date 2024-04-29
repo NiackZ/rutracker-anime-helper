@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      6.3
+// @version      6.4
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -1200,7 +1200,7 @@ $Differences$
         code = code.replaceAll(TAG.header, header)
             .replaceAll(TAG.names, names)
             .replaceAll(TAG.namesString, namesString)
-            .replaceAll(TAG.country, FIELDS.STUDIO.value)
+            .replaceAll(TAG.country, FIELDS.COUNTRY.value)
             .replaceAll(TAG.year, FIELDS.YEAR.value)
             .replaceAll(TAG.season, animeInfo?.season.name)
             .replaceAll(TAG.genre, FIELDS.GENRE.value)
