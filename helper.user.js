@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      6.4
+// @version      6.5
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -295,9 +295,9 @@ $Differences$
         });
     }
     const fetchData = async (link, apiEndpoint = '/get/anime/info') => {
-        const cyclicUrl = 'https://elated-cummerbund-eel.cyclic.app';
+        const appUrl = 'https://anime-info-service.vercel.app';
         try {
-            const response = await fetch(`${cyclicUrl}${apiEndpoint}`, {
+            const response = await fetch(`${appUrl}${apiEndpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
