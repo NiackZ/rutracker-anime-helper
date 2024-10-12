@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      6.7
+// @version      6.8
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -1172,6 +1172,7 @@ $Differences$
             if (FIELDS.OTHER_NAME.value) {
                 names.push(...FIELDS.OTHER_NAME.value
                     .split("/")
+                    .reverse()
                     .filter(n => !valueIsEmpty(n))
                     .map(n => n.trim())
                 );
