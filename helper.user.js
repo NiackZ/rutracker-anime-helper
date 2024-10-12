@@ -1169,18 +1169,18 @@ $Differences$
         };
         const formatNames = (separator) => {
             const names = [];
-            if (FIELDS.RUS_NAME.value) {
-                names.push(FIELDS.RUS_NAME.value);
-            }
-            if (FIELDS.ENG_NAME.value) {
-                names.push(FIELDS.ENG_NAME.value);
-            }
             if (FIELDS.OTHER_NAME.value) {
                 names.push(...FIELDS.OTHER_NAME.value
                     .split("/")
                     .filter(n => !valueIsEmpty(n))
                     .map(n => n.trim())
                 );
+            }
+            if (FIELDS.ENG_NAME.value) {
+                names.push(FIELDS.ENG_NAME.value);
+            }
+            if (FIELDS.RUS_NAME.value) {
+                names.push(FIELDS.RUS_NAME.value);
             }
             return names.join(separator);
         };
