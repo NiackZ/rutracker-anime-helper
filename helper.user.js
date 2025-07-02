@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      7.0
+// @version      7.1
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -18,7 +18,7 @@
 // ==/UserScript==
 //
 
-(function() {
+(() => {
     'use strict';
     let miInfo = null;
     let animeInfo = null;
@@ -227,7 +227,7 @@ $Differences$
     const findLastTitleRow = (title) => {
         let maxNumber = -1;
         let element = null;
-        getTableTitles().forEach(function(titleElement) {
+        getTableTitles().forEach(titleElement => {
             if (titleElement.textContent.includes(title)) {
                 const match = titleElement.textContent.match(/(\d+)/);
                 if (match && parseInt(match[0]) > maxNumber) {
@@ -238,7 +238,7 @@ $Differences$
         });
         return element;
     }
-    function createVoiceElements(rowId) {
+    const createVoiceElements = (rowId) => {
         const json = {
             voiceSelectId: `audio_voice_${rowId}`,
             voiceTypeSelectId: `voice_type_${rowId}`
@@ -282,7 +282,7 @@ $Differences$
         return { voice, type, json };
     }
     const addVoiceFields = () => {
-        getTableTitles().forEach(function(titleElement) {
+        getTableTitles().forEach(titleElement => {
             if (titleElement.textContent.includes('Аудио')) {
                 additionalVoiceRowCount++;
                 const audioRow = titleElement.parentElement;
@@ -541,8 +541,7 @@ $Differences$
         fillButton.type = 'button';
         fillButton.style.width = '100px';
         fillButton.value = 'Заполнить';
-        fillButton.onclick = async function() {
-
+        fillButton.onclick = async () => {
             try {
                 fillButton.disabled = true;
                 const link = document.getElementById('titleLink').value;
@@ -564,7 +563,6 @@ $Differences$
             finally {
                 fillButton.disabled = false;
             }
-
         };
         buttonSpan.appendChild(fillButton);
         inputsCell.appendChild(buttonSpan);
@@ -644,14 +642,14 @@ $Differences$
         notification.style.transition = 'opacity 0.1s ease-in-out'; // Добавляем анимацию
         document.body.appendChild(notification);
 
-        setTimeout(function () {
+        setTimeout(() => {
             notification.style.opacity = '1';
         }, 100);
 
-        setTimeout(function () {
+        setTimeout(() => {
             notification.style.opacity = '0';
 
-            setTimeout(function () {
+            setTimeout(() => {
                 document.body.removeChild(notification);
             }, 500);
         }, 3000);
@@ -668,6 +666,18 @@ $Differences$
         modalContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
         modalContainer.style.justifyContent = 'center';
         modalContainer.style.alignItems = 'center';
+
+        const closeModal = () => {
+            modalContainer.style.display = 'none';
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+        }
+
+        const openModal = () => {
+            modalContainer.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        }
 
         const modalContent = document.createElement('div');
         modalContent.id = "templateModal";
@@ -757,7 +767,7 @@ $Differences$
         saveButton.style.padding = '5px 10px';
         saveButton.style.borderRadius = '5px';
 
-        saveButton.addEventListener('click', function () {
+        saveButton.addEventListener('click', () => {
             localStorage.setItem(localStorageName, templateArea.value);
             showNotification('Шаблон сохранен');
         });
@@ -786,18 +796,6 @@ $Differences$
         modalContent.appendChild(closeButtonSymbol);
         modalContainer.appendChild(modalContent);
         document.body.appendChild(modalContainer);
-
-        function openModal() {
-            modalContainer.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            modalContainer.style.display = 'none';
-            document.body.style.overflow = '';
-            document.documentElement.style.overflow = '';
-        }
 
         const openButton = document.getElementById('setTemplateButton');
         if (!openButton) return;
@@ -916,7 +914,7 @@ $Differences$
             fillButton.type = 'button';
             fillButton.style.width = '150px';
             fillButton.value = 'Заполнить тех. данные';
-            fillButton.onclick = function() {
+            fillButton.onclick = () => {
                 try{
                     miInfo = null;
                     const techData = getTechData();
@@ -1099,7 +1097,7 @@ $Differences$
             if (FIELDS.ENG_NAME.value) {
                 names.push(FIELDS.ENG_NAME.value);
             }
-            function checkAudioLanguages(audioArray) {
+            const checkAudioLanguages = audioArray => {
                 if (!audioArray) return null;
                 return {
                     hasRussian: audioArray.some(track => track.language?.toLowerCase() === LANG.RUS.toLowerCase()),
@@ -1442,7 +1440,7 @@ $Differences$
     const createExtRow = () => {
         const findTechRow = (title) => {
             let element = null;
-            getTableTitles().forEach(function(titleElement) {
+            getTableTitles().forEach(titleElement => {
                 if (titleElement.textContent.includes(title)) {
                     element = titleElement.parentElement;
                 }
