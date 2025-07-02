@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      7.1
+// @version      7.2
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -28,28 +28,28 @@
 
 [img=right]$Poster$[/img]
 [size=16]
-[b]Страна[/b] $Country$
-[b]Год выпуска[/b] $Year$
-[b]Жанр[/b] $Genre$
-[b]Тип[/b] $Type$
-[b]Продолжительность[/b] $Count$ эп. по $Duration$
-[b]Режиссер[/b] $Director$
-[b]Студия[/b] $Studio$
-[b]Информационные ссылки[/b] [url=$WA_Link$][b]World Art[/b][/url][b], [/b][url=$Shikimori_Link$][b]Shikimori[/b][/url][b], [/b][url=$MAL_Link$][b]MyAnimeList[/b][/url][b], [/b][url=$AniDb_Link$][b]AniDB[/b][/url], [url=https://www.kinopoisk.ru/film/123/][b]КиноПоиск[/b][/url], [url=https://www.imdb.com/title/123][b]IMDB[/b][/url]
+[color=#534BA1][b]Страна[/b][/color]: $Country$
+[color=#534BA1][b]Год выпуска[/b][/color]: $Year$
+[color=#534BA1][b]Жанр[/b][/color]: $Genre$
+[color=#534BA1][b]Тип[/b][/color]: $Type$
+[color=#534BA1][b]Продолжительность[/b][/color]: $Count$ эп. по $Duration$
+[color=#534BA1][b]Режиссер[/b][/color]: $Director$
+[color=#534BA1][b]Студия[/b][/color]: $Studio$
+[color=#534BA1][b]Информационные ссылки[/b][/color]: [url=$WA_Link$][color=darkred][b]World Art[/b][/color][/url][b], [/b][url=$Shikimori_Link$][color=darkred][b]Shikimori[/b][/color][/url][b], [/b][url=$MAL_Link$][color=darkred][b]MyAnimeList[/b][/color][/url][b], [/b][url=$AniDb_Link$][color=darkred][b]AniDB[/b][/color][/url], [url=https://www.kinopoisk.ru/film/123/][color=darkred][b]КиноПоиск[/b][/color][/url], [url=https://www.imdb.com/title/123][color=darkred][b]IMDB[/b][/color][/url]
 
-[b]Описание[/b] $Description$
+[color=#534BA1][b]Описание[/b][/color]: $Description$
 
-[b]Субтитры[/b]
-_USERSUBS [b]#{index}[/b]: [img=1em]{flag}[/img] {language}, {format}, {title} - ()  USERSUBS_
+[color=#534BA1][b]Субтитры[/b][/color]:
+_USERSUBS [b][color=#534BA1]#{index}[/color][/b]: [img=1em]{flag}[/img] {language}, {format}, [color=blue]{title}[/color] - [color=indigo][/color]  USERSUBS_
 
-[b]Качество[/b] $Quality$ [$Reaper$]
-[b]Формат видео[/b] $Video_ext$
-[b]Видео[/b] $Video_codec$, $Video_width$x$Video_height$ ($Video_aspect$), $Video_bit_rate$, $Video_bit_depth$ bits, $Video_fps$ fps
+[color=#534BA1][b]Качество[/b][/color]: $Quality$ [color=darkred][$Reaper$][/color]
+[color=#534BA1][b]Формат видео[/b][/color]: $Video_ext$
+[color=#534BA1][b]Видео[/b][/color]: [color=darkred]$Video_codec$[/color], $Video_width$x$Video_height$ ($Video_aspect$), $Video_bit_rate$, [color=darkred]$Video_bit_depth$ bits[/color], $Video_fps$ fps
 
-[b]Аудио[/b]
-_USERAUDIO [b]#{index}[/b]: [img=1em]{flag}[/img] {language}, {codec}, {bitRate}, {sampleRate}, {bitDepth} bits, {channels} ch- {voice} от {title} {type} USERAUDIO_
+[color=#534BA1][b]Аудио[/b][/color]:
+_USERAUDIO [b][color=#534BA1]#{index}[/color][/b]: [img=1em]{flag}[/img] {language}, {codec}, {bitRate}, {sampleRate}, {bitDepth} bits, {channels} ch - {voice} от [color=blue]{title}[/color] [color=indigo]{type}[/color] USERAUDIO_
 
-[b]Все субтитры и озвучки в составе контейнера[/b]
+[b][color=#993399]Все субтитры и озвучки в составе контейнера[/color][/b]
 [/size]
 
 [spoiler="Список эпизодов"]
