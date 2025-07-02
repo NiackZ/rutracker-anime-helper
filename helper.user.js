@@ -2,7 +2,7 @@
 // @name         rutracker release helper
 // @namespace    rutracker helpers
 // @description  Заполнение полей по данным со страницы аниме на сайте World-Art
-// @version      6.9
+// @version      7.0
 // @author       NiackZ
 // @homepage     https://github.com/NiackZ/rutracker-anime-helper
 // @downloadURL  https://github.com/NiackZ/rutracker-anime-helper/raw/master/helper.user.js
@@ -13,14 +13,6 @@
 // @match        https://rutracker.org/forum/posting.php?f=1389&mode=new_rel
 // @match        https://rutracker.org/forum/posting.php?f=1391&mode=new_rel
 // @match        https://rutracker.org/forum/posting.php?f=2491&mode=new_rel
-
-// @match        https://rutracker.net/forum/posting.php?f=599&mode=new_rel
-// @match        https://rutracker.net/forum/posting.php?f=1105&mode=new_rel
-// @match        https://rutracker.net/forum/posting.php?f=1106&mode=new_rel
-// @match        https://rutracker.net/forum/posting.php?f=1389&mode=new_rel
-// @match        https://rutracker.net/forum/posting.php?f=1391&mode=new_rel
-// @match        https://rutracker.net/forum/posting.php?f=2491&mode=new_rel
-
 // @grant        none
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=rutracker.org
 // ==/UserScript==
@@ -347,13 +339,13 @@ $Differences$
             BIT_RATE: /Битрейт\s+:\s+([^\r\n]+)/,
             WIDTH: /Ширина\s+:\s+(\d+(?:\s+\d*)?)/,
             HEIGHT: /Высота\s+:\s+(\d+(?:\s+\d*)?)/,
-            ASPECT: /Соотношение сторон\s+:\s+([^\r\n]+)/,
+            ASPECT: /Соотношение сторон дисплея\s+:\s+([^\r\n]+)/,
             FRAME_RATE: /Частота кадров\s+:\s+([^\r\n]+)/,
             CHROMA_SUBSAMPLING: /Субдискретизация насыщенности\s+:\s+([^\r\n]+)/,
             COLOR_PRIMARIES: /Основные цвета\s+:\s+([^\r\n]+)/,
             BIT_DEPTH: /Битовая глубина\s+:\s+(\d+)/,
-            CHANNELS: /Каналы\s+:\s+(\d+)/,
-            SAMPLING_RATE: /Частота\s+:\s+(.+)/,
+            CHANNELS: /Канал\(-ы\)\s+:\s+(\d+)/,
+            SAMPLING_RATE: /Частота дискретизации\s+:\s+(.+)/,
             LANGUAGE: /Язык\s+:\s+(.+)/,
             TITLE: /Заголовок\s+:\s+(.+)/,
             NAME: /Полное имя\s+:\s+([^\r\n]+)/
@@ -1262,8 +1254,8 @@ $Differences$
             const audios = [];
             if (!!audio.int) {
                 audio.int.forEach(item => {
-                   item.type = 'в составе контейнера';
-                   audios.push(item);
+                    item.type = 'в составе контейнера';
+                    audios.push(item);
                 });
             }
             if (!!audio.ext) {
